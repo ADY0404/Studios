@@ -31,53 +31,58 @@
       min-height: 100%;
       background: transparent;
     }
+
+    #creatorPageRoot {
+      color: {{ appearance.text_color|default:'#f8fafc' }};
+      --btn-color: {{ appearance.button_color|default:'#3b82f6' }};
+      --btn-text: {{ appearance.button_text_color|default:'#ffffff' }};
+      --theme-accent: {{ appearance.accent_color|default:'#3b82f6' }};
+    }
+
+    #creatorBgLayer {
+      {% if appearance.bg_type == 'image' and appearance.bg_image %}
+      background: url('{{ appearance.bg_image.url }}') center / cover no-repeat;
+      {% elif appearance.bg_type == 'color' %}
+      background: {{ appearance.bg_color|default:'#0f172a' }};
+      {% elif appearance.bg_type == 'gradient' %}
+      background: {{ appearance.bg_gradient|default:'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }};
+      {% endif %}
+    }
+
+    #creatorBgOverlay {
+      background-color: rgba(0, 0, 0, calc({{ appearance.bg_overlay_opacity|default:30 }} / 100));
+      backdrop-filter: blur({{ appearance.bg_blur|default:0 }}px);
+      -webkit-backdrop-filter: blur({{ appearance.bg_blur|default:0 }}px);
+      {% if appearance.bg_type != 'image' or not appearance.bg_image %}
+        {% if not is_preview %}display: none;{% endif %}
+      {% endif %}
+    }
+
+    {% if appearance.social_position != 'top' %}
+    #socialsTopContainer {
+      display: none !important;
+    }
+    {% endif %}
+
+    {% if appearance.social_position != 'bottom' %}
+    #socialsBottomContainer {
+      display: none !important;
+    }
+    {% endif %}
   </style>
 </head>
 
-{% with app=appearance %}
 <body>
+{% with app=appearance %}
 
 <!-- Dynamic Background Layer -->
-<div class="creator-bg-layer"
-     id="creatorBgLayer"
-     style="
-       position: fixed;
-       top: 0; left: 0; width: 100%; height: 100%;
-       pointer-events: none;
-       z-index: 0;
-       {% if app.bg_type == 'image' and app.bg_image %}
-         background: url('{{ app.bg_image.url }}') center / cover no-repeat;
-       {% elif app.bg_type == 'color' %}
-         background: {{ app.bg_color|default:'#0f172a' }};
-       {% elif app.bg_type == 'gradient' %}
-         background: {{ app.bg_gradient|default:'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }};
-       {% endif %}
-     ">
+<div class="creator-bg-layer" id="creatorBgLayer">
   <!-- Optional Darkness Overlay & Blur Layer -->
-  <div class="creator-bg-overlay"
-       id="creatorBgOverlay"
-       style="
-         position: absolute;
-         top: 0; left: 0; width: 100%; height: 100%;
-         background-color: rgba(0, 0, 0, calc({{ app.bg_overlay_opacity|default:30 }} / 100));
-         backdrop-filter: blur({{ app.bg_blur|default:0 }}px);
-         -webkit-backdrop-filter: blur({{ app.bg_blur|default:0 }}px);
-         {% if app.bg_type != 'image' or not app.bg_image %}
-           {% if not is_preview %}display: none;{% endif %}
-         {% endif %}
-       ">
-  </div>
+  <div class="creator-bg-overlay" id="creatorBgOverlay"></div>
 </div>
 
 <!-- Main Creator Page Shell -->
-<div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }}"
-     id="creatorPageRoot"
-     style="
-       color: {{ app.text_color|default:'#f8fafc' }};
-       --btn-color: {{ app.button_color|default:'#3b82f6' }};
-       --btn-text: {{ app.button_text_color|default:'#ffffff' }};
-       --theme-accent: {{ app.accent_color|default:'#3b82f6' }};
-     ">
+<div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }}" id="creatorPageRoot">
 
   <!-- Messages for Public Visitors -->
   {% if messages and not is_preview %}
@@ -174,8 +179,7 @@
 
       <!-- Social Media Icons (Top Placement) -->
       {% if socials %}
-      <div id="socialsTopContainer" class="d-flex flex-wrap {% if app.profile_alignment == 'left' %}justify-content-start{% else %}justify-content-center{% endif %} gap-2 mb-1"
-           style="{% if app.social_position != 'top' %}display: none !important;{% endif %}">
+      <div id="socialsTopContainer" class="d-flex flex-wrap {% if app.profile_alignment == 'left' %}justify-content-start{% else %}justify-content-center{% endif %} gap-2 mb-1">
         {% for s in socials %}
         <a href="{% if not is_preview %}{{ s.url }}{% else %}#{% endif %}"
            {% if not is_preview %}target="_blank" rel="noopener noreferrer"{% endif %}
@@ -317,8 +321,7 @@
 
       <!-- Social Media Icons (Bottom Placement) -->
       {% if socials %}
-      <div id="socialsBottomContainer" class="d-flex flex-wrap justify-content-center gap-2 mt-2"
-           style="{% if app.social_position != 'bottom' %}display: none !important;{% endif %}">
+      <div id="socialsBottomContainer" class="d-flex flex-wrap justify-content-center gap-2 mt-2">
         {% for s in socials %}
         <a href="{% if not is_preview %}{{ s.url }}{% else %}#{% endif %}"
            {% if not is_preview %}target="_blank" rel="noopener noreferrer"{% endif %}
