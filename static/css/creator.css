@@ -268,6 +268,14 @@
 .font-playfair { font-family: 'Playfair Display', Georgia, serif !important; }
 .font-jetbrains_mono { font-family: 'JetBrains Mono', monospace !important; }
 
+/* Social Placement Display Rules */
+.social-pos-top #socialsBottomContainer {
+  display: none !important;
+}
+.social-pos-bottom #socialsTopContainer {
+  display: none !important;
+}
+
 /* Social Icons Presentation */
 .social-icon-circle {
   width: 42px;

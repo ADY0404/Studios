@@ -31,44 +31,6 @@
       min-height: 100%;
       background: transparent;
     }
-
-    #creatorPageRoot {
-      color: {{ appearance.text_color|default:'#f8fafc' }};
-      --btn-color: {{ appearance.button_color|default:'#3b82f6' }};
-      --btn-text: {{ appearance.button_text_color|default:'#ffffff' }};
-      --theme-accent: {{ appearance.accent_color|default:'#3b82f6' }};
-    }
-
-    #creatorBgLayer {
-      {% if appearance.bg_type == 'image' and appearance.bg_image %}
-      background: url('{{ appearance.bg_image.url }}') center / cover no-repeat;
-      {% elif appearance.bg_type == 'color' %}
-      background: {{ appearance.bg_color|default:'#0f172a' }};
-      {% elif appearance.bg_type == 'gradient' %}
-      background: {{ appearance.bg_gradient|default:'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }};
-      {% endif %}
-    }
-
-    #creatorBgOverlay {
-      background-color: rgba(0, 0, 0, calc({{ appearance.bg_overlay_opacity|default:30 }} / 100));
-      backdrop-filter: blur({{ appearance.bg_blur|default:0 }}px);
-      -webkit-backdrop-filter: blur({{ appearance.bg_blur|default:0 }}px);
-      {% if appearance.bg_type != 'image' or not appearance.bg_image %}
-        {% if not is_preview %}display: none;{% endif %}
-      {% endif %}
-    }
-
-    {% if appearance.social_position != 'top' %}
-    #socialsTopContainer {
-      display: none !important;
-    }
-    {% endif %}
-
-    {% if appearance.social_position != 'bottom' %}
-    #socialsBottomContainer {
-      display: none !important;
-    }
-    {% endif %}
   </style>
 </head>
 
@@ -81,8 +43,70 @@
   <div class="creator-bg-overlay" id="creatorBgOverlay"></div>
 </div>
 
+<!-- Appearance Configuration JSON -->
+<script id="appearanceData" type="application/json">
+{
+  "textColor": "{{ appearance.text_color|default:'#f8fafc'|escapejs }}",
+  "buttonColor": "{{ appearance.button_color|default:'#3b82f6'|escapejs }}",
+  "buttonTextColor": "{{ appearance.button_text_color|default:'#ffffff'|escapejs }}",
+  "accentColor": "{{ appearance.accent_color|default:'#3b82f6'|escapejs }}",
+  "bgType": "{{ appearance.bg_type|default:'theme'|escapejs }}",
+  "bgColor": "{{ appearance.bg_color|default:'#0f172a'|escapejs }}",
+  "bgGradient": "{{ appearance.bg_gradient|default:'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)'|escapejs }}",
+  "bgImage": "{% if appearance.bg_image %}{{ appearance.bg_image.url|escapejs }}{% endif %}",
+  "bgOverlayOpacity": {{ appearance.bg_overlay_opacity|default:30 }},
+  "bgBlur": {{ appearance.bg_blur|default:0 }},
+  "isPreview": {% if is_preview %}true{% else %}false{% endif %}
+}
+</script>
+
+<!-- Immediate Synchronous Appearance Engine -->
+<script>
+(function() {
+  try {
+    var dataEl = document.getElementById('appearanceData');
+    if (!dataEl) return;
+    var app = JSON.parse(dataEl.textContent);
+
+    var root = document.getElementById('creatorPageRoot');
+    var bgLayer = document.getElementById('creatorBgLayer');
+    var overlay = document.getElementById('creatorBgOverlay');
+
+    if (root) {
+      root.style.color = app.textColor;
+      root.style.setProperty('--btn-color', app.buttonColor);
+      root.style.setProperty('--btn-text', app.buttonTextColor);
+      root.style.setProperty('--theme-accent', app.accentColor);
+    }
+
+    if (bgLayer) {
+      if (app.bgType === 'image' && app.bgImage) {
+        bgLayer.style.background = "url('" + app.bgImage + "') center / cover no-repeat";
+        if (overlay) {
+          overlay.style.display = 'block';
+          overlay.style.backgroundColor = 'rgba(0, 0, 0, ' + (app.bgOverlayOpacity / 100) + ')';
+          overlay.style.backdropFilter = 'blur(' + app.bgBlur + 'px)';
+          overlay.style.webkitBackdropFilter = 'blur(' + app.bgBlur + 'px)';
+        }
+      } else if (app.bgType === 'color') {
+        bgLayer.style.background = app.bgColor;
+        if (overlay && !app.isPreview) overlay.style.display = 'none';
+      } else if (app.bgType === 'gradient') {
+        bgLayer.style.background = app.bgGradient;
+        if (overlay && !app.isPreview) overlay.style.display = 'none';
+      } else if (app.bgType === 'theme') {
+        bgLayer.style.background = '';
+        if (overlay && !app.isPreview) overlay.style.display = 'none';
+      }
+    }
+  } catch (e) {
+    console.error('Appearance styling init error:', e);
+  }
+})();
+</script>
+
 <!-- Main Creator Page Shell -->
-<div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }}" id="creatorPageRoot">
+<div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }} social-pos-{{ app.social_position|default:'top' }}" id="creatorPageRoot">
 
   <!-- Messages for Public Visitors -->
   {% if messages and not is_preview %}
