@@ -1,0 +1,81 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Contacts & Leads{% endblock %}
+
+{% block dashboard_content %}
+<div class="card border-0 shadow-sm">
+  <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h3 class="h6 mb-0 fw-bold">Visitor Inquiries ({{ contacts.count }})</h3>
+      <span class="text-body-secondary small">Messages submitted through your public contact form</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <!-- Search Form -->
+      <form method="GET" class="d-flex gap-1">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by name or email..." class="form-control form-control-sm" style="width: 220px;">
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Search</button>
+      </form>
+
+      <!-- CSV Export -->
+      <a href="{% url 'dashboard:export_contacts' %}" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1">
+        <i class="bi bi-download"></i>
+        <span>Export CSV</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    {% if contacts %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr class="small text-body-secondary">
+            <th class="ps-3 py-2">Name</th>
+            <th class="py-2">Contact Details</th>
+            <th class="py-2">Message</th>
+            <th class="py-2">Received</th>
+            <th class="pe-3 py-2 text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in contacts %}
+          <tr>
+            <td class="ps-3 py-3 fw-semibold text-dark">{{ c.name }}</td>
+            <td class="py-3">
+              <a href="mailto:{{ c.email }}" class="text-primary text-decoration-none fw-medium small">{{ c.email }}</a>
+              {% if c.phone %}<div class="small text-muted">{{ c.phone }}</div>{% endif %}
+            </td>
+            <td class="py-3 small text-body-secondary" style="max-width: 320px;">
+              {{ c.message|linebreaksbr }}
+            </td>
+            <td class="py-3 small text-body-secondary">
+              {{ c.created_at|date:"M d, Y" }}<br/>
+              <span class="text-muted">{{ c.created_at|date:"h:i A" }}</span>
+            </td>
+            <td class="pe-3 py-3 text-end">
+              <form method="POST" action="{% url 'dashboard:delete_contact' contact_id=c.id %}" onsubmit="return confirm('Delete this contact record?');" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-body-secondary">
+      <i class="bi bi-inbox fs-1 d-block mb-3 text-muted"></i>
+      <h4 class="h6 fw-bold">No inquiries found</h4>
+      <p class="small text-muted mb-0">
+        {% if query %}No results match your search "{{ query }}".{% else %}Visitor messages submitted on your bio will appear here.{% endif %}
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

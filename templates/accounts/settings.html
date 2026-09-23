@@ -1,0 +1,142 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Account & Security Settings{% endblock %}
+
+{% block dashboard_content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-8">
+    <div class="d-flex flex-column gap-4">
+
+      <!-- Update Email -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h3 class="h6 mb-0 fw-bold">Account Email</h3>
+          <span class="text-body-secondary small">Used for notifications and signing in</span>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_email">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Email Address</label>
+              <input type="email" name="email" class="form-control" value="{{ email_form.email.value }}" required>
+              {% if email_form.email.errors %}<div class="text-danger small mt-1">{{ email_form.email.errors.0 }}</div>{% endif %}
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Update Email</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Update Username Handle -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h3 class="h6 mb-0 fw-bold">Change Handle</h3>
+          <span class="text-body-secondary small">Your public page URL is <code>linkstudio.bio/<span id="handleSettingsPreview">{{ profile.username }}</span>/</code></span>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_username">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Username Handle</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted small">@</span>
+                <input type="text" name="username" id="settingsUsernameInput" class="form-control" value="{{ username_form.username.value|default:profile.username }}" required>
+              </div>
+              {% if username_form.username.errors %}<div class="text-danger small mt-1">{{ username_form.username.errors.0 }}</div>{% endif %}
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Save Username</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h3 class="h6 mb-0 fw-bold">Change Password</h3>
+          <span class="text-body-secondary small">Update your password to keep your account safe</span>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Current Password</label>
+              <input type="password" name="old_password" class="form-control" required placeholder="••••••••">
+              {% if password_form.old_password.errors %}<div class="text-danger small mt-1">{{ password_form.old_password.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label small fw-semibold">New Password</label>
+                <input type="password" name="new_password1" class="form-control" required placeholder="••••••••">
+                {% if password_form.new_password1.errors %}<div class="text-danger small mt-1">{{ password_form.new_password1.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small fw-semibold">Confirm New Password</label>
+                <input type="password" name="new_password2" class="form-control" required placeholder="••••••••">
+                {% if password_form.new_password2.errors %}<div class="text-danger small mt-1">{{ password_form.new_password2.errors.0 }}</div>{% endif %}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Change Password</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="card border-danger-subtle shadow-sm">
+        <div class="card-header bg-danger-subtle py-3 border-bottom border-danger-subtle">
+          <h3 class="h6 mb-0 fw-bold text-danger">Danger Zone</h3>
+        </div>
+        <div class="card-body p-4">
+          <p class="small text-body-secondary mb-3">
+            Permanently delete your creator account, bio page, links, services, and all contact history. This action cannot be undone.
+          </p>
+          <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+            Delete My Account
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Native Modal: Delete Account Confirmation -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-bottom bg-danger-subtle text-danger">
+        <h5 class="modal-title fw-bold" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'accounts:delete' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <p class="small text-body-secondary mb-3">
+            Please type your username <strong class="text-dark">{{ request.user.username }}</strong> to confirm permanent deletion:
+          </p>
+          <input type="text" name="confirm_delete" class="form-control" placeholder="{{ request.user.username }}" required autocomplete="off">
+        </div>
+        <div class="modal-footer border-top bg-light">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-danger">Permanently Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const usernameInput = document.getElementById('settingsUsernameInput');
+  const preview = document.getElementById('handleSettingsPreview');
+  if (usernameInput && preview) {
+    usernameInput.addEventListener('input', () => {
+      preview.textContent = usernameInput.value.trim().toLowerCase() || 'username';
+    });
+  }
+</script>
+{% endblock %}

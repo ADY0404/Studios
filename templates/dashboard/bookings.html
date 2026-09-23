@@ -1,0 +1,355 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Services & Bookings Hub{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-column gap-4">
+
+  <!-- Section 1: Bookings Management -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <div>
+        <h3 class="h6 mb-0 fw-bold">Client Bookings</h3>
+        <span class="text-body-secondary small">Manage meeting requests booked by your visitors</span>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="btn-group btn-group-sm" role="group">
+        <a href="?status=all" class="btn {% if current_status == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">All</a>
+        <a href="?status=pending" class="btn {% if current_status == 'pending' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Pending</a>
+        <a href="?status=confirmed" class="btn {% if current_status == 'confirmed' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Confirmed</a>
+        <a href="?status=rejected" class="btn {% if current_status == 'rejected' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Rejected</a>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      {% if bookings %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr class="small text-body-secondary">
+              <th class="ps-3 py-2">Client Details</th>
+              <th class="py-2">Service</th>
+              <th class="py-2">Date & Time</th>
+              <th class="py-2">Fee</th>
+              <th class="py-2">Status</th>
+              <th class="pe-3 py-2 text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            <tr>
+              <td class="ps-3 py-3">
+                <div class="fw-semibold text-dark">{{ b.visitor_name }}</div>
+                <div class="small text-body-secondary">{{ b.visitor_email }}</div>
+                {% if b.visitor_phone %}<div class="small text-muted">{{ b.visitor_phone }}</div>{% endif %}
+              </td>
+              <td class="py-3">
+                <div class="fw-semibold small text-dark">{{ b.service.title }}</div>
+                <div class="small text-body-secondary">{{ b.service.duration_minutes }} minutes</div>
+              </td>
+              <td class="py-3">
+                <div class="small fw-semibold text-dark">{{ b.start_time|date:"M d, Y" }}</div>
+                <div class="small text-body-secondary">{{ b.start_time|date:"h:i A" }} – {{ b.end_time|date:"h:i A" }}</div>
+              </td>
+              <td class="py-3">
+                <div class="small fw-bold text-primary">${{ b.service.price }}</div>
+                <span class="badge text-bg-light border" style="font-size: 0.65rem;">{{ b.payment_status|upper }}</span>
+              </td>
+              <td class="py-3">
+                {% if b.status == 'confirmed' %}
+                  <span class="badge text-bg-success">Confirmed</span>
+                {% elif b.status == 'pending' %}
+                  <span class="badge text-bg-warning">Pending</span>
+                {% elif b.status == 'rejected' %}
+                  <span class="badge text-bg-danger">Rejected</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">{{ b.status }}</span>
+                {% endif %}
+              </td>
+              <td class="pe-3 py-3 text-end">
+                <div class="d-inline-flex gap-1">
+                  {% if b.status == 'pending' %}
+                  <form method="POST" action="{% url 'dashboard:update_booking_status' booking_id=b.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="confirmed">
+                    <button type="submit" class="btn btn-sm btn-success py-0 px-2" style="font-size: 0.75rem;">Approve</button>
+                  </form>
+                  <form method="POST" action="{% url 'dashboard:update_booking_status' booking_id=b.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="rejected">
+                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem;">Reject</button>
+                  </form>
+                  {% elif b.status == 'confirmed' %}
+                  <form method="POST" action="{% url 'dashboard:update_booking_status' booking_id=b.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="completed">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.75rem;">Complete</button>
+                  </form>
+                  <form method="POST" action="{% url 'dashboard:update_booking_status' booking_id=b.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="cancelled">
+                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem;">Cancel</button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-body-secondary">
+        <i class="bi bi-calendar-x fs-1 d-block mb-3 text-muted"></i>
+        <p class="mb-0">No bookings matching filter.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Section 2: Services Offered -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+      <div>
+        <h3 class="h6 mb-0 fw-bold">Services & Sessions Offered</h3>
+        <span class="text-body-secondary small">Bookable offerings displayed on your public page</span>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+        <i class="bi bi-plus-lg"></i>
+        <span>Add Service</span>
+      </button>
+    </div>
+
+    <div class="card-body p-4">
+      {% if services %}
+      <div class="row g-3">
+        {% for s in services %}
+        <div class="col-md-6 col-xl-4">
+          <div class="card h-100 border rounded-3 p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h4 class="h6 fw-bold mb-0 text-dark">{{ s.title }}</h4>
+              <span class="badge text-bg-primary">${{ s.price }}</span>
+            </div>
+            <div class="small text-body-secondary mb-2">
+              <i class="bi bi-clock me-1"></i> {{ s.duration_minutes }} minutes
+            </div>
+            {% if s.description %}
+            <p class="small text-body-secondary mb-3 flex-grow-1">{{ s.description }}</p>
+            {% endif %}
+            <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+              <a href="{% url 'dashboard:edit_service' service_id=s.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+              <form method="POST" action="{% url 'dashboard:delete_service' service_id=s.id %}" onsubmit="return confirm('Delete this service?');" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-4 text-body-secondary">
+        <p class="mb-2">You haven't added any services yet.</p>
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">Create Your First Service</button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Section 3: Availability Schedule -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom">
+      <h3 class="h6 mb-0 fw-bold">Weekly Operating Hours</h3>
+      <span class="text-body-secondary small">Set your hours for each weekday. Overlapping reservations are blocked automatically.</span>
+    </div>
+
+    <div class="card-body p-4">
+      <form method="POST" action="{% url 'dashboard:update_availability' %}">
+        {% csrf_token %}
+        <div class="row g-3">
+          
+          <!-- Monday to Sunday -->
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Monday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_0" checked id="act_0">
+                  <label class="form-check-label small" for="act_0">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_0" value="09:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_0" value="17:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Tuesday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_1" checked id="act_1">
+                  <label class="form-check-label small" for="act_1">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_1" value="09:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_1" value="17:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Wednesday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_2" checked id="act_2">
+                  <label class="form-check-label small" for="act_2">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_2" value="09:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_2" value="17:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Thursday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_3" checked id="act_3">
+                  <label class="form-check-label small" for="act_3">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_3" value="09:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_3" value="17:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Friday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_4" checked id="act_4">
+                  <label class="form-check-label small" for="act_4">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_4" value="09:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_4" value="17:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Saturday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_5" id="act_5">
+                  <label class="form-check-label small" for="act_5">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_5" value="10:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_5" value="14:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="small text-dark">Sunday</strong>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" name="active_6" id="act_6">
+                  <label class="form-check-label small" for="act_6">Active</label>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="time" name="start_6" value="10:00" class="form-control form-control-sm">
+                <span class="small text-body-secondary">to</span>
+                <input type="time" name="end_6" value="14:00" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button type="submit" class="btn btn-primary btn-sm">Save Availability Hours</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bootstrap Native Modal: Add Service -->
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-bold" id="addServiceModalLabel">Add Booking Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'dashboard:add_service' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Service Title</label>
+            <input type="text" name="title" class="form-control" placeholder="e.g. 1-on-1 Consultation" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Description</label>
+            <textarea name="description" class="form-control" rows="3" placeholder="Explain what the client receives..."></textarea>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-semibold">Duration (Minutes)</label>
+              <input type="number" name="duration_minutes" class="form-control" value="30" min="5" step="5" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-semibold">Price (USD)</label>
+              <input type="number" name="price" class="form-control" value="50.00" min="0" step="0.01" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Booking Instructions</label>
+            <textarea name="instructions" class="form-control" rows="2" placeholder="Information provided upon booking (e.g. video link instructions)"></textarea>
+          </div>
+
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="is_active" id="srv_active" checked>
+            <label class="form-check-label small" for="srv_active">Enable on bio page immediately</label>
+          </div>
+        </div>
+
+        <div class="modal-footer border-top bg-light">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-primary">Create Service</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

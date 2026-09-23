@@ -1,0 +1,112 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Social Media Profiles{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4 justify-content-center" style="max-width: 1040px; margin: 0 auto;">
+  
+  <!-- Add Profile Form -->
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3 border-bottom">
+        <h3 class="h6 mb-0 fw-bold">Connect Social Account</h3>
+        <span class="text-body-secondary small">Add platforms to display as icons on your bio</span>
+      </div>
+
+      <div class="card-body p-4">
+        <form method="POST">
+          {% csrf_token %}
+          
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Platform</label>
+            <select name="platform" class="form-select">
+              <option value="youtube">YouTube</option>
+              <option value="instagram">Instagram</option>
+              <option value="tiktok">TikTok</option>
+              <option value="twitter">X / Twitter</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="github">GitHub</option>
+              <option value="threads">Threads</option>
+              <option value="spotify">Spotify</option>
+              <option value="facebook">Facebook</option>
+              <option value="twitch">Twitch</option>
+              <option value="discord">Discord</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Profile URL</label>
+            <input type="url" name="url" class="form-control" placeholder="https://instagram.com/yourhandle" required>
+            {% if form.url.errors %}<div class="text-danger small mt-1">{{ form.url.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="form-check form-switch mb-4">
+            <input class="form-check-input" type="checkbox" name="is_active" id="id_social_active" checked>
+            <label class="form-check-label small" for="id_social_active">Display on public bio</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-sm w-100">Save Social Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Profiles List -->
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+        <div>
+          <h3 class="h6 mb-0 fw-bold">Connected Profiles</h3>
+          <span class="text-body-secondary small">{{ socials.count }} platforms linked</span>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        {% if socials %}
+        <div class="list-group list-group-flush">
+          {% for s in socials %}
+          <div class="list-group-item d-flex align-items-center justify-content-between py-3 px-3">
+            <div class="d-flex align-items-center gap-3 overflow-hidden">
+              <div class="rounded-circle bg-light d-flex align-items-center justify-content-center flex-shrink-0 text-dark border" style="width: 40px; height: 40px;">
+                {% include 'components/social_icons.html' with platform=s.platform %}
+              </div>
+              <div class="overflow-hidden">
+                <div class="fw-semibold text-dark text-truncate">{{ s.get_platform_display }}</div>
+                <div class="small text-body-secondary text-truncate" style="max-width: 240px;">{{ s.url }}</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+              <!-- Toggle Active -->
+              <form method="POST" action="{% url 'dashboard:social_toggle' social_id=s.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm {% if s.is_active %}btn-outline-success{% else %}btn-outline-secondary{% endif %}" title="{% if s.is_active %}Active on bio{% else %}Hidden{% endif %}">
+                  <span class="small">{% if s.is_active %}Active{% else %}Hidden{% endif %}</span>
+                </button>
+              </form>
+
+              <!-- Delete -->
+              <form method="POST" action="{% url 'dashboard:social_delete' social_id=s.id %}" onsubmit="return confirm('Remove this social link?');" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove Profile">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-body-secondary">
+          <i class="bi bi-share fs-1 text-muted d-block mb-3"></i>
+          <p class="mb-0">No social platforms linked yet.</p>
+          <small class="text-muted">Use the form on the left to connect your YouTube, X, or Instagram.</small>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Your Account — LinkStudio{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex flex-column justify-content-center py-5 bg-light">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+        
+        <!-- Brand Logo -->
+        <div class="text-center mb-4">
+          <a class="d-inline-flex align-items-center gap-2 fw-bold text-dark text-decoration-none" href="{% url 'home' %}">
+            <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 p-2" style="width: 36px; height: 36px;">
+              <i class="bi bi-link-45deg fs-4"></i>
+            </div>
+            <span class="fs-4">Link<span class="text-primary">Studio</span></span>
+          </a>
+          <h1 class="h5 fw-bold mt-3 mb-1">Claim your creator bio</h1>
+          <p class="text-body-secondary small">Launch your public page in seconds</p>
+        </div>
+
+        <!-- Registration Card -->
+        <div class="card border-0 shadow-sm rounded-4 p-3 p-sm-4 bg-white">
+          <form method="POST">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 small mb-3">
+              {% for error in form.non_field_errors %}{{ error }}<br/>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Choose Handle</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted small">@</span>
+                <input type="text" name="username" id="id_username" class="form-control" value="{{ request.GET.handle|default:form.username.value|default:'' }}" required placeholder="username">
+              </div>
+              {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>{% endif %}
+              <div class="form-text small" style="font-size: 0.75rem;">Your page will be: <code>linkstudio.bio/<span id="handlePreview">username</span>/</code></div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Display Name</label>
+              <input type="text" name="display_name" class="form-control" value="{{ form.display_name.value|default:'' }}" required placeholder="Eddie Scott">
+              {% if form.display_name.errors %}<div class="text-danger small mt-1">{{ form.display_name.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Email Address</label>
+              <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" required placeholder="name@example.com">
+              {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Password</label>
+              <input type="password" name="password1" class="form-control" required placeholder="At least 8 characters">
+              {% if form.password1.errors %}<div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-semibold">Confirm Password</label>
+              <input type="password" name="password2" class="form-control" required placeholder="Re-enter password">
+              {% if form.password2.errors %}<div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>{% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Create Bio Account</button>
+          </form>
+        </div>
+
+        <!-- Login Link -->
+        <div class="text-center mt-3 small text-body-secondary">
+          Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary fw-semibold text-decoration-none">Sign In</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const usernameInput = document.getElementById('id_username');
+  const preview = document.getElementById('handlePreview');
+  if (usernameInput && preview) {
+    usernameInput.addEventListener('input', () => {
+      preview.textContent = usernameInput.value.trim().toLowerCase() || 'username';
+    });
+  }
+</script>
+{% endblock %}

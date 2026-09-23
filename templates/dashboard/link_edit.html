@@ -1,0 +1,86 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Edit Link{% endblock %}
+
+{% block dashboard_content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="mb-3">
+      <a href="{% url 'dashboard:links' %}" class="btn btn-sm btn-link text-body-secondary p-0 text-decoration-none">
+        <i class="bi bi-arrow-left me-1"></i> Back to all links
+      </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3 border-bottom">
+        <h3 class="h6 mb-0 fw-bold">Edit Link: {{ link.title }}</h3>
+        <span class="text-body-secondary small">Update destination URL, thumbnail, and visibility</span>
+      </div>
+
+      <div class="card-body p-4">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Link Title</label>
+            <input type="text" name="title" class="form-control" value="{{ form.title.value }}" required>
+            {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Destination URL</label>
+            <input type="url" name="url" class="form-control" value="{{ form.url.value }}" required>
+            {% if form.url.errors %}<div class="text-danger small mt-1">{{ form.url.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Description (Optional)</label>
+            <input type="text" name="description" class="form-control" value="{{ form.description.value|default:'' }}">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Thumbnail</label>
+            {% if link.thumbnail %}
+            <div class="d-flex align-items-center gap-3 mb-2 p-2 bg-light rounded-3 border">
+              <img src="{{ link.thumbnail.url }}" alt="{{ link.title }}" class="rounded-2 object-fit-cover" style="width: 48px; height: 48px;">
+              <span class="small text-body-secondary">Current image</span>
+            </div>
+            {% endif %}
+            <input type="file" name="thumbnail" class="form-control" accept="image/*">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Icon</label>
+            <select name="icon" class="form-select">
+              <option value="" {% if not link.icon %}selected{% endif %}>No Icon (Default)</option>
+              <option value="globe" {% if link.icon == 'globe' %}selected{% endif %}>Globe / Website</option>
+              <option value="video" {% if link.icon == 'video' %}selected{% endif %}>Video / Stream</option>
+              <option value="music" {% if link.icon == 'music' %}selected{% endif %}>Music / Audio</option>
+              <option value="shopping-bag" {% if link.icon == 'shopping-bag' %}selected{% endif %}>Store / Merchandise</option>
+              <option value="book-open" {% if link.icon == 'book-open' %}selected{% endif %}>Book / Newsletter</option>
+              <option value="podcast" {% if link.icon == 'podcast' %}selected{% endif %}>Podcast / Audio</option>
+              <option value="calendar" {% if link.icon == 'calendar' %}selected{% endif %}>Calendar / Events</option>
+              <option value="sparkles" {% if link.icon == 'sparkles' %}selected{% endif %}>Sparkles / Featured</option>
+              <option value="star" {% if link.icon == 'star' %}selected{% endif %}>Star / Highlight</option>
+              <option value="heart" {% if link.icon == 'heart' %}selected{% endif %}>Heart / Support</option>
+              <option value="code" {% if link.icon == 'code' %}selected{% endif %}>Code / Projects</option>
+              <option value="file-text" {% if link.icon == 'file-text' %}selected{% endif %}>Document / Portfolio</option>
+            </select>
+          </div>
+
+          <div class="form-check form-switch mb-4">
+            <input class="form-check-input" type="checkbox" name="is_active" id="edit_is_active" {% if form.is_active.value %}checked{% endif %}>
+            <label class="form-check-label small" for="edit_is_active">Link is active and visible</label>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'dashboard:links' %}" class="btn btn-sm btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-sm btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

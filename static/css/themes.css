@@ -1,0 +1,171 @@
+/* ==========================================================================
+   LinkStudio - Designer Themes Engine (9 Handcrafted Palettes)
+   ========================================================================== */
+
+/* 1. Minimalist Snow (Ultra-clean high key light, subtle slate lines) */
+.theme-minimal_light {
+  --theme-bg: #f8fafc;
+  --theme-text: #0f172a;
+  --theme-text-muted: #64748b;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #e2e8f0;
+  --theme-card-text: #0f172a;
+  --theme-accent: #2563eb;
+  --theme-badge-bg: #eff6ff;
+  --theme-badge-text: #1d4ed8;
+  --theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 2. Midnight Obsidian (AMOLED deep black with slate frosted glass) */
+.theme-midnight_dark {
+  --theme-bg: #090d16;
+  --theme-text: #f8fafc;
+  --theme-text-muted: #94a3b8;
+  --theme-card-bg: rgba(30, 41, 59, 0.65);
+  --theme-card-border: rgba(148, 163, 184, 0.15);
+  --theme-card-text: #f8fafc;
+  --theme-accent: #3b82f6;
+  --theme-badge-bg: rgba(59, 130, 246, 0.15);
+  --theme-badge-text: #60a5fa;
+  --theme-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 3. Sunset Reverie (Warm purple to velvet rose gradient with glass) */
+.theme-sunset_gradient {
+  --theme-bg: linear-gradient(135deg, #180d2e 0%, #4a044e 50%, #831843 100%);
+  --theme-text: #ffffff;
+  --theme-text-muted: #fbcfe8;
+  --theme-card-bg: rgba(255, 255, 255, 0.12);
+  --theme-card-border: rgba(255, 255, 255, 0.22);
+  --theme-card-text: #ffffff;
+  --theme-accent: #f43f5e;
+  --theme-badge-bg: rgba(244, 63, 94, 0.25);
+  --theme-badge-text: #ffe4e6;
+  --theme-shadow: 0 10px 25px -5px rgba(74, 4, 78, 0.5);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 4. Matcha & Sage (Earthy botanical greens & serene balance) */
+.theme-emerald_clean {
+  --theme-bg: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #065f46 100%);
+  --theme-text: #f0fdf4;
+  --theme-text-muted: #a7f3d0;
+  --theme-card-bg: rgba(6, 78, 59, 0.65);
+  --theme-card-border: rgba(52, 211, 153, 0.25);
+  --theme-card-text: #f0fdf4;
+  --theme-accent: #10b981;
+  --theme-badge-bg: rgba(16, 185, 129, 0.2);
+  --theme-badge-text: #6ee7b7;
+  --theme-shadow: 0 8px 20px -4px rgba(2, 44, 34, 0.6);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 5. Neo-Brutalist Pop (Bold electric yellow, thick 2.5px borders, 3D drop shadow) */
+.theme-neo_brutalism {
+  --theme-bg: #fde047;
+  --theme-text: #000000;
+  --theme-text-muted: #1c1917;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #000000;
+  --theme-card-text: #000000;
+  --theme-accent: #000000;
+  --theme-badge-bg: #000000;
+  --theme-badge-text: #fde047;
+  --theme-shadow: 4px 4px 0px #000000;
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 6. Neon Cyberpunk (Deep obsidian with luminous cyan & electric blue glow) */
+.theme-cyber_sleek {
+  --theme-bg: radial-gradient(circle at 50% 0%, #0c1838 0%, #030712 100%);
+  --theme-text: #f8fafc;
+  --theme-text-muted: #94a3b8;
+  --theme-card-bg: rgba(12, 24, 56, 0.7);
+  --theme-card-border: rgba(56, 189, 248, 0.35);
+  --theme-card-text: #e0f2fe;
+  --theme-accent: #06b6d4;
+  --theme-badge-bg: rgba(6, 182, 212, 0.2);
+  --theme-badge-text: #67e8f9;
+  --theme-shadow: 0 0 18px rgba(6, 182, 212, 0.25);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 7. Velvet Cherry (Deep bordeaux & rose quartz elegance) */
+.theme-velvet_cherry {
+  --theme-bg: linear-gradient(135deg, #2b0615 0%, #4c0519 50%, #881337 100%);
+  --theme-text: #fff1f2;
+  --theme-text-muted: #fecdd3;
+  --theme-card-bg: rgba(76, 5, 25, 0.65);
+  --theme-card-border: rgba(244, 63, 94, 0.25);
+  --theme-card-text: #fff1f2;
+  --theme-accent: #fb7185;
+  --theme-badge-bg: rgba(251, 113, 133, 0.2);
+  --theme-badge-text: #ffe4e6;
+  --theme-shadow: 0 8px 24px -4px rgba(43, 6, 21, 0.7);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 8. Ocean Aurora (Deep nautical indigo with teal wave currents) */
+.theme-ocean_aurora {
+  --theme-bg: linear-gradient(135deg, #07122b 0%, #0f2b48 50%, #115e59 100%);
+  --theme-text: #f0fdfa;
+  --theme-text-muted: #99f6e4;
+  --theme-card-bg: rgba(15, 43, 72, 0.7);
+  --theme-card-border: rgba(20, 184, 166, 0.3);
+  --theme-card-text: #f0fdfa;
+  --theme-accent: #14b8a6;
+  --theme-badge-bg: rgba(20, 184, 166, 0.2);
+  --theme-badge-text: #5eead4;
+  --theme-shadow: 0 8px 24px -4px rgba(7, 18, 43, 0.6);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* 9. Paper & Ink Editorial (Warm artisanal parchment with luxury editorial typography) */
+.theme-paper_editorial {
+  --theme-bg: #f5f0e8;
+  --theme-text: #1c1917;
+  --theme-text-muted: #78716c;
+  --theme-card-bg: #fffdf9;
+  --theme-card-border: #e7dfd5;
+  --theme-card-text: #1c1917;
+  --theme-accent: #78350f;
+  --theme-badge-bg: #fef3c7;
+  --theme-badge-text: #92400e;
+  --theme-shadow: 0 2px 8px rgba(28, 25, 23, 0.06);
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* Apply theme variables to link cards and session cards */
+.creator-page .btn-theme-link {
+  background-color: var(--theme-card-bg);
+  color: var(--theme-card-text) !important;
+  border: 1px solid var(--theme-card-border);
+  box-shadow: var(--theme-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.creator-page .theme-card {
+  background-color: var(--theme-card-bg);
+  color: var(--theme-card-text) !important;
+  border: 1px solid var(--theme-card-border);
+  box-shadow: var(--theme-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.creator-page .theme-badge {
+  background-color: var(--theme-badge-bg);
+  color: var(--theme-badge-text) !important;
+}

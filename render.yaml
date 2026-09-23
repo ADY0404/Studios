@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: linkstudio
+    runtime: python
+    region: frankfurt # or oregon / ohio
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DB_ENGINE
+        value: django.db.backends.mysql
+      - key: DB_NAME
+        value: linkstudio
+      - key: DB_USER
+        value: dbpgf41321955
+      - key: DB_PASSWORD
+        sync: false # Set in Render Dashboard or from .env
+      - key: DB_HOST
+        value: serverless-europe-west2.sysp0000.db2.skysql.com
+      - key: DB_PORT
+        value: "4048"
+      - key: DB_SSL
+        value: "True"
+      - key: PYTHON_VERSION
+        value: "3.11.9"

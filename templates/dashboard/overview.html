@@ -1,0 +1,177 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block dashboard_content %}
+<!-- Creator Link Banner -->
+<div class="card border-0 shadow-sm mb-4 bg-primary-subtle text-primary-emphasis">
+  <div class="card-body p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h2 class="h5 fw-bold mb-1">Your public bio is ready to share</h2>
+      <p class="mb-2 small text-body-secondary">Direct your audience to your personalized bio page:</p>
+      <div class="d-inline-flex align-items-center gap-2 bg-white px-3 py-1 rounded-3 border">
+        <span class="font-monospace small text-primary">{{ request.scheme }}://{{ request.get_host }}/{{ profile.username }}/</span>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-sm btn-outline-primary bg-white d-inline-flex align-items-center gap-1" onclick="copyBioUrl('{{ request.scheme }}://{{ request.get_host }}/{{ profile.username }}/')">
+        <i class="bi bi-clipboard"></i>
+        <span id="copyBtnText">Copy Link</span>
+      </button>
+      <a href="{% url 'public_profile' username=profile.username %}" target="_blank" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1">
+        <span>View Profile</span>
+        <i class="bi bi-box-arrow-up-right small"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Key Performance Indicators (KPIs) -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-xl">
+    <div class="stat-card shadow-sm">
+      <div class="stat-label">Total Views</div>
+      <div class="stat-number">{{ profile.total_views }}</div>
+      <div class="small text-body-secondary mt-1">Bio impressions</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-4 col-xl">
+    <div class="stat-card shadow-sm">
+      <div class="stat-label">Active Links</div>
+      <div class="stat-number">{{ links_count }}</div>
+      <div class="small text-body-secondary mt-1">Listed on bio</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-4 col-xl">
+    <div class="stat-card shadow-sm">
+      <div class="stat-label">Link Clicks</div>
+      <div class="stat-number">{{ total_clicks }}</div>
+      <div class="small text-body-secondary mt-1">Outbound clicks</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-4 col-xl">
+    <div class="stat-card shadow-sm">
+      <div class="stat-label">Upcoming Bookings</div>
+      <div class="stat-number">{{ upcoming_bookings_count }}</div>
+      <div class="small text-body-secondary mt-1">Confirmed & pending</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-4 col-xl">
+    <div class="stat-card shadow-sm">
+      <div class="stat-label">Inquiries</div>
+      <div class="stat-number">{{ contacts_count }}</div>
+      <div class="small text-body-secondary mt-1">Visitor contact leads</div>
+    </div>
+  </div>
+</div>
+
+<!-- Two-Column Tables -->
+<div class="row g-4">
+  <!-- Upcoming Bookings -->
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
+        <div>
+          <h3 class="h6 mb-0 fw-bold">Upcoming Bookings</h3>
+          <span class="text-body-secondary small">Next scheduled appointments</span>
+        </div>
+        <a href="{% url 'dashboard:bookings' %}" class="btn btn-sm btn-outline-secondary">View All</a>
+      </div>
+
+      <div class="card-body p-0">
+        {% if upcoming_bookings %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <tbody>
+              {% for b in upcoming_bookings %}
+              <tr>
+                <td class="ps-3 py-3">
+                  <div class="fw-semibold text-dark">{{ b.visitor_name }}</div>
+                  <div class="small text-body-secondary">{{ b.service.title }} ({{ b.service.duration_minutes }}m)</div>
+                </td>
+                <td class="py-3">
+                  <div class="small fw-semibold text-dark">{{ b.start_time|date:"M d, Y" }}</div>
+                  <div class="small text-body-secondary">{{ b.start_time|date:"h:i A" }}</div>
+                </td>
+                <td class="text-end pe-3 py-3">
+                  {% if b.status == 'confirmed' %}
+                    <span class="badge text-bg-success">Confirmed</span>
+                  {% elif b.status == 'pending' %}
+                    <span class="badge text-bg-warning">Pending</span>
+                  {% elif b.status == 'rejected' %}
+                    <span class="badge text-bg-danger">Rejected</span>
+                  {% else %}
+                    <span class="badge text-bg-secondary">{{ b.status }}</span>
+                  {% endif %}
+                  <div class="small fw-bold text-primary mt-1">${{ b.service.price }}</div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-body-secondary">
+          <i class="bi bi-calendar-x fs-1 d-block mb-2 text-muted"></i>
+          <p class="mb-2">No upcoming bookings scheduled.</p>
+          <a href="{% url 'dashboard:bookings' %}" class="btn btn-sm btn-outline-primary">Set Up Services</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Leads -->
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
+        <div>
+          <h3 class="h6 mb-0 fw-bold">Recent Leads & Inquiries</h3>
+          <span class="text-body-secondary small">Submitted through your bio contact form</span>
+        </div>
+        <a href="{% url 'dashboard:contacts' %}" class="btn btn-sm btn-outline-secondary">View All</a>
+      </div>
+
+      <div class="card-body p-0">
+        {% if recent_contacts %}
+        <div class="list-group list-group-flush">
+          {% for c in recent_contacts %}
+          <div class="list-group-item py-3 px-3">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <div class="fw-semibold text-dark">{{ c.name }}</div>
+              <small class="text-body-secondary">{{ c.created_at|date:"M d, Y" }}</small>
+            </div>
+            <div class="small text-primary mb-1">{{ c.email }}</div>
+            {% if c.message %}
+            <p class="small text-body-secondary mb-0 text-truncate">"{{ c.message }}"</p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-body-secondary">
+          <i class="bi bi-chat-left-dots fs-1 d-block mb-2 text-muted"></i>
+          <p class="mb-0">No visitor inquiries yet.</p>
+          <small class="text-muted">Inquiries sent via your profile will appear here.</small>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyBioUrl(url) {
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('copyBtnText');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
+    });
+  }
+</script>
+{% endblock %}

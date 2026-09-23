@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}LinkStudio — The Modern Creator Link-in-Bio Platform{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column min-vh-100 bg-white">
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg border-bottom bg-white py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark" href="{% url 'home' %}">
+        <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 p-2" style="width: 34px; height: 34px;">
+          <i class="bi bi-link-45deg fs-4"></i>
+        </div>
+        <span>Link<span class="text-primary">Studio</span></span>
+      </a>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-outline-secondary">Sign In</a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-sm btn-primary">Create Bio &rarr;</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="py-5 text-center container my-auto">
+    <div class="row justify-content-center py-4">
+      <div class="col-lg-8 col-xl-7">
+        <div class="badge text-bg-primary-subtle text-primary mb-3 px-3 py-2 rounded-pill fw-semibold">
+          <i class="bi bi-stars me-1"></i> Purpose-built for creators, consultants & indie makers
+        </div>
+
+        <h1 class="display-5 fw-bold text-dark mb-3 tracking-tight">
+          Everything you create, sell, and share in one clean link
+        </h1>
+
+        <p class="lead text-body-secondary mb-4">
+          Replace cluttered link trees with a mobile-first personal hub. Organize links with drag-and-drop ease, accept consultation bookings with double-booking prevention, and let visitors download your vCard with a tap.
+        </p>
+
+        <!-- Claim Handle Input Group -->
+        <div class="card border p-2 shadow-sm rounded-pill mx-auto mb-4" style="max-width: 480px;">
+          <div class="input-group input-group-lg border-0">
+            <span class="input-group-text bg-transparent border-0 text-muted small pe-0 font-monospace">linkstudio.bio/</span>
+            <input type="text" id="claimHandleInput" class="form-control border-0 shadow-none px-1" placeholder="yourname" aria-label="Username">
+            <button class="btn btn-primary rounded-pill px-4" type="button" onclick="claimHandle()">Claim Bio</button>
+          </div>
+        </div>
+
+        <div class="small text-muted">Free to get started &bull; No credit card required</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Features Grid -->
+  <section class="py-5 bg-light border-top border-bottom">
+    <div class="container py-4">
+      <div class="text-center mb-5">
+        <h2 class="h3 fw-bold">Built like a real SaaS product</h2>
+        <p class="text-muted small">Everything a creator needs to monetize audience attention</p>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="card-body">
+              <div class="rounded-3 bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3" style="width: 44px; height: 44px;">
+                <i class="bi bi-palette fs-4"></i>
+              </div>
+              <h3 class="h6 fw-bold">Appearance Studio</h3>
+              <p class="small text-body-secondary mb-0">6 curated theme presets with full control over buttons, shapes, color palettes, and fonts with live mobile preview.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="card-body">
+              <div class="rounded-3 bg-success-subtle text-success d-inline-flex align-items-center justify-content-center mb-3" style="width: 44px; height: 44px;">
+                <i class="bi bi-calendar-check fs-4"></i>
+              </div>
+              <h3 class="h6 fw-bold">Intelligent Scheduler</h3>
+              <p class="small text-body-secondary mb-0">Let clients book 1-on-1 consultations directly. Backed by transactional locks that prevent double-booking.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="card-body">
+              <div class="rounded-3 bg-warning-subtle text-warning-emphasis d-inline-flex align-items-center justify-content-center mb-3" style="width: 44px; height: 44px;">
+                <i class="bi bi-person-vcard fs-4"></i>
+              </div>
+              <h3 class="h6 fw-bold">Contact Capture & vCard</h3>
+              <p class="small text-body-secondary mb-0">Allow visitors to save your vCard (.vcf) directly into their phone contacts, or leave verified messages for you.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 mt-auto text-center text-body-secondary small">
+    <div class="container">
+      &copy; 2026 LinkStudio. Built with Django & MariaDB.
+    </div>
+  </footer>
+</div>
+
+<script>
+  function claimHandle() {
+    const handle = document.getElementById('claimHandleInput').value.trim();
+    if (handle) {
+      window.location.href = "{% url 'accounts:register' %}?handle=" + encodeURIComponent(handle);
+    } else {
+      window.location.href = "{% url 'accounts:register' %}";
+    }
+  }
+</script>
+{% endblock %}

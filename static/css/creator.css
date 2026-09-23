@@ -1,0 +1,277 @@
+/* ==========================================================================
+   LinkStudio - Creator Profile Design System (SaaS Grade)
+   ========================================================================== */
+
+.creator-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Background overlay filter layer */
+.creator-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Profile Cover Banner */
+.creator-banner-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  height: 180px;
+  overflow: hidden;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  z-index: 1;
+}
+
+.creator-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Main Container */
+.creator-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  padding: 2.5rem 1.25rem 4rem 1.25rem;
+  margin: 0 auto;
+  z-index: 2;
+}
+
+.creator-container.has-banner {
+  padding-top: 0;
+}
+
+.creator-header-with-banner {
+  margin-top: -55px; /* Overlap avatar onto banner */
+}
+
+/* Avatar Styling */
+.creator-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.85rem;
+}
+
+.creator-avatar {
+  width: 104px;
+  height: 104px;
+  object-fit: cover;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Avatar Shapes */
+.avatar-circle { border-radius: 50% !important; }
+.avatar-rounded { border-radius: 26% !important; } /* Modern Squircle */
+.avatar-square { border-radius: 4px !important; }
+
+/* Avatar Borders */
+.avatar-border-white {
+  border: 4px solid #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.avatar-border-accent {
+  border: 4px solid var(--theme-accent, #3b82f6);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+.avatar-border-glow {
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 25px var(--theme-accent, #3b82f6), 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.avatar-border-none {
+  border: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* Verified Creator Badge */
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b82f6;
+  font-size: 1.15rem;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+/* Profile Tagline / Pronouns */
+.creator-tagline {
+  font-size: 0.875rem;
+  opacity: 0.85;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Link Cards System */
+.creator-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.9rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shape Helpers */
+.shape-rounded { border-radius: 14px !important; }
+.shape-pill { border-radius: 999px !important; }
+.shape-square { border-radius: 0px !important; }
+
+/* Style Helpers */
+.style-glass {
+  background-color: var(--theme-card-bg, rgba(255, 255, 255, 0.12)) !important;
+  border-color: var(--theme-card-border, rgba(255, 255, 255, 0.2)) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.style-solid {
+  background-color: var(--btn-color, var(--theme-accent, #3b82f6)) !important;
+  color: var(--btn-text, #ffffff) !important;
+  border: 1px solid transparent !important;
+}
+
+.style-soft {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.style-outline {
+  background-color: transparent !important;
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-color: currentColor !important;
+}
+
+.style-hard_3d {
+  background-color: var(--theme-card-bg, #ffffff) !important;
+  border: 2.5px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+.style-glow {
+  border-color: var(--theme-accent, #3b82f6) !important;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.35) !important;
+}
+
+/* Card Shadow Elevations */
+.shadow-none { box-shadow: none !important; }
+.shadow-subtle { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04) !important; }
+.shadow-elevated { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.15) !important; }
+.shadow-glow { box-shadow: 0 0 20px var(--theme-accent, rgba(59, 130, 246, 0.35)) !important; }
+.shadow-hard_3d { box-shadow: 4px 4px 0px currentColor !important; }
+
+/* Hover Effects */
+.hover-lift:hover {
+  transform: translateY(-3px);
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+.hover-glow:hover {
+  box-shadow: 0 0 22px var(--theme-accent, #3b82f6) !important;
+  border-color: var(--theme-accent, #3b82f6) !important;
+}
+.hover-none:hover {
+  transform: none;
+}
+
+/* Typography Classes */
+.font-inter { font-family: 'Inter', system-ui, sans-serif !important; }
+.font-plus_jakarta_sans { font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important; }
+.font-outfit { font-family: 'Outfit', sans-serif !important; }
+.font-dm_sans { font-family: 'DM Sans', sans-serif !important; }
+.font-poppins { font-family: 'Poppins', sans-serif !important; }
+.font-space_grotesk { font-family: 'Space Grotesk', sans-serif !important; }
+.font-syne { font-family: 'Syne', sans-serif !important; }
+.font-playfair { font-family: 'Playfair Display', Georgia, serif !important; }
+.font-jetbrains_mono { font-family: 'JetBrains Mono', monospace !important; }
+
+/* Social Icons Presentation */
+.social-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.social-icon-circle:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.social-style-monochrome {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.social-style-glass {
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: inherit;
+}
+
+.social-style-colored {
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Service Card Booking Engine */
+.service-card {
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Message / Contact Form Card */
+.contact-lead-card {
+  padding: 1.5rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.contact-lead-card input,
+.contact-lead-card textarea {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: inherit;
+}
+
+.contact-lead-card input:focus,
+.contact-lead-card textarea:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--theme-accent, #3b82f6);
+  color: inherit;
+  box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.2);
+}

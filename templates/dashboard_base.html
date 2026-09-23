@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="dashboard-layout">
+  
+  <!-- Sidebar -->
+  <aside class="dashboard-sidebar" id="dashboardSidebar">
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 p-2" style="width: 34px; height: 34px;">
+        <i class="bi bi-link-45deg fs-4"></i>
+      </div>
+      <span>Link<span class="text-primary">Studio</span></span>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a href="{% url 'dashboard:overview' %}" class="nav-link {% if request.resolver_match.url_name == 'overview' %}active{% endif %}">
+            <i class="bi bi-grid-1x2"></i>
+            <span>Overview</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'dashboard:links' %}" class="nav-link {% if 'link' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-link"></i>
+            <span>Links</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'dashboard:social' %}" class="nav-link {% if 'social' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-share"></i>
+            <span>Social Media</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'dashboard:bookings' %}" class="nav-link {% if 'booking' in request.resolver_match.url_name or 'service' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-calendar-check"></i>
+            <span>Bookings & Services</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'dashboard:contacts' %}" class="nav-link {% if 'contact' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-people"></i>
+            <span>Contacts & Leads</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'dashboard:appearance' %}" class="nav-link {% if 'appearance' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-palette"></i>
+            <span>Appearance Studio</span>
+          </a>
+        </li>
+
+        <li class="my-2 border-top"></li>
+
+        <li class="nav-item">
+          <a href="{% url 'dashboard:profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            <i class="bi bi-person-badge"></i>
+            <span>Profile Details</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'accounts:settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+            <i class="bi bi-gear"></i>
+            <span>Account Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Sidebar User Footer -->
+    <div class="sidebar-user d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2 overflow-hidden">
+        {% if request.user.profile.avatar %}
+          <img src="{{ request.user.profile.avatar.url }}" alt="{{ request.user.profile.display_name }}" class="rounded-circle object-fit-cover" style="width: 36px; height: 36px;">
+        {% else %}
+          <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 0.875rem;">
+            {{ request.user.profile.display_name|first|upper }}
+          </div>
+        {% endif %}
+        <div class="overflow-hidden">
+          <div class="fw-semibold text-truncate small">{{ request.user.profile.display_name }}</div>
+          <div class="text-body-secondary text-truncate" style="font-size: 0.75rem;">@{{ request.user.profile.username }}</div>
+        </div>
+      </div>
+      <a href="{% url 'accounts:logout' %}" class="btn btn-sm btn-link text-body-secondary p-1" title="Log out">
+        <i class="bi bi-box-arrow-right fs-5"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="dashboard-main">
+    <!-- Topbar -->
+    <header class="dashboard-topbar d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary d-lg-none" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+          <i class="bi bi-list fs-5"></i>
+        </button>
+        <h1 class="h5 mb-0 fw-semibold text-dark">{% block page_title %}Dashboard{% endblock %}</h1>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'public_profile' username=request.user.profile.username %}" target="_blank" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+          <span>View Public Page</span>
+          <i class="bi bi-box-arrow-up-right small"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <main class="dashboard-container">
+      {% block dashboard_content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

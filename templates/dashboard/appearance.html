@@ -1,0 +1,493 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block page_title %}Appearance Studio{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4">
+  
+  <!-- Left Column: Modern Customization Studio Tabs -->
+  <div class="col-lg-7 col-xl-8">
+    <form method="POST" enctype="multipart/form-data" id="appearanceForm">
+      {% csrf_token %}
+
+      <!-- Sticky Top Save Bar -->
+      <div class="d-flex align-items-center justify-content-between mb-4 p-3 bg-white border rounded-4 shadow-sm">
+        <div>
+          <h2 class="h6 mb-0 fw-bold">Appearance Studio</h2>
+          <span class="text-body-secondary small">Changes preview in real-time on your simulated phone</span>
+        </div>
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold rounded-pill d-inline-flex align-items-center gap-2">
+          <i class="bi bi-cloud-check-fill"></i>
+          <span>Save Changes</span>
+        </button>
+      </div>
+
+      <!-- Studio Navigation Tabs -->
+      <ul class="nav nav-pills nav-fill gap-2 p-1 bg-white border rounded-4 shadow-sm mb-4" id="studioTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active rounded-pill py-2 small fw-semibold" id="tab-themes" data-bs-toggle="pill" data-bs-target="#panel-themes" type="button" role="tab">
+            <i class="bi bi-palette2 me-1"></i> Themes
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link rounded-pill py-2 small fw-semibold" id="tab-header" data-bs-toggle="pill" data-bs-target="#panel-header" type="button" role="tab">
+            <i class="bi bi-person-badge me-1"></i> Header
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link rounded-pill py-2 small fw-semibold" id="tab-background" data-bs-toggle="pill" data-bs-target="#panel-background" type="button" role="tab">
+            <i class="bi bi-image me-1"></i> Background
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link rounded-pill py-2 small fw-semibold" id="tab-buttons" data-bs-toggle="pill" data-bs-target="#panel-buttons" type="button" role="tab">
+            <i class="bi bi-ui-radios-grid me-1"></i> Cards & Buttons
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link rounded-pill py-2 small fw-semibold" id="tab-typography" data-bs-toggle="pill" data-bs-target="#panel-typography" type="button" role="tab">
+            <i class="bi bi-fonts me-1"></i> Typography & Socials
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content Panels -->
+      <div class="tab-content" id="studioTabContent">
+
+        <!-- ========================================== -->
+        <!-- PANEL 1: VISUAL THEMES GALLERY -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade show active" id="panel-themes" role="tabpanel">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="h6 mb-0 fw-bold">Curated Designer Palettes</h3>
+                <span class="text-body-secondary small">One-click cohesive palettes designed by professional UI artists</span>
+              </div>
+              <span class="badge text-bg-light border small text-muted">9 Themes</span>
+            </div>
+
+            <div class="card-body p-4">
+              <!-- Hidden underlying select that stays in sync with theme cards -->
+              <div class="d-none">
+                {{ form.theme }}
+              </div>
+
+              <!-- Visual Theme Selection Grid -->
+              <div class="row g-3" id="themeGrid">
+                
+                <!-- 1. Minimalist Snow -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'minimal_light' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="minimal_light"
+                       style="background: #f8fafc; color: #0f172a; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Minimalist Snow</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #2563eb;"></span>
+                        <span class="rounded-circle d-inline-block border" style="width: 12px; height: 12px; background: #ffffff;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border" style="background: #ffffff; color: #0f172a;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Midnight Obsidian -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'midnight_dark' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="midnight_dark"
+                       style="background: #090d16; color: #f8fafc; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Midnight Obsidian</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #3b82f6;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #1e293b;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border border-secondary" style="background: rgba(30, 41, 59, 0.7); color: #f8fafc;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Sunset Reverie -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'sunset_gradient' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="sunset_gradient"
+                       style="background: linear-gradient(135deg, #180d2e 0%, #4a044e 50%, #831843 100%); color: #ffffff; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Sunset Reverie</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #f43f5e;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #fda4af;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border border-white border-opacity-25" style="background: rgba(255, 255, 255, 0.15); color: #ffffff;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. Matcha & Sage -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'emerald_clean' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="emerald_clean"
+                       style="background: linear-gradient(135deg, #022c22 0%, #064e3b 100%); color: #f0fdf4; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Matcha & Sage</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #10b981;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #064e3b;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border border-success border-opacity-25" style="background: rgba(6, 78, 59, 0.7); color: #f0fdf4;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. Neo-Brutalist Pop -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border-2 border-dark position-relative cursor-pointer transition-all {% if appearance.theme == 'neo_brutalism' %}ring-2 shadow-sm{% endif %}"
+                       data-theme-key="neo_brutalism"
+                       style="background: #fde047; color: #000000; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Neo-Brutalist</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #000000;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #fde047;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-2 text-center small fw-bold border-2 border-dark" style="background: #ffffff; color: #000000; box-shadow: 2px 2px 0 #000;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 6. Neon Cyberpunk -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'cyber_sleek' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="cyber_sleek"
+                       style="background: radial-gradient(circle at 50% 0%, #0c1838 0%, #030712 100%); color: #f8fafc; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Neon Cyberpunk</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #06b6d4;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #3b82f6;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border border-info border-opacity-50" style="background: rgba(12, 24, 56, 0.7); color: #e0f2fe; box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 7. Velvet Cherry -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'velvet_cherry' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="velvet_cherry"
+                       style="background: linear-gradient(135deg, #2b0615 0%, #4c0519 50%, #881337 100%); color: #fff1f2; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Velvet Cherry</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #fb7185;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #4c0519;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border border-danger border-opacity-25" style="background: rgba(76, 5, 25, 0.7); color: #fff1f2;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 8. Ocean Aurora -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'ocean_aurora' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="ocean_aurora"
+                       style="background: linear-gradient(135deg, #07122b 0%, #0f2b48 50%, #115e59 100%); color: #f0fdfa; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small">Ocean Aurora</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #14b8a6;"></span>
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #0f2b48;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border border-teal border-opacity-25" style="background: rgba(15, 43, 72, 0.7); color: #f0fdfa;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 9. Paper & Ink Editorial -->
+                <div class="col-sm-6 col-md-4">
+                  <div class="theme-card-option p-3 rounded-4 border position-relative cursor-pointer transition-all {% if appearance.theme == 'paper_editorial' %}border-primary ring-2 shadow-sm{% endif %}"
+                       data-theme-key="paper_editorial"
+                       style="background: #f5f0e8; color: #1c1917; min-height: 140px; cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="fw-bold small" style="font-family: 'Playfair Display', serif;">Paper & Ink</span>
+                      <div class="d-flex gap-1">
+                        <span class="rounded-circle d-inline-block" style="width: 12px; height: 12px; background: #78350f;"></span>
+                        <span class="rounded-circle d-inline-block border" style="width: 12px; height: 12px; background: #fffdf9;"></span>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-3 text-center small fw-semibold border" style="background: #fffdf9; color: #1c1917;">
+                      Link Preview
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PANEL 2: HEADER & COVER -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="panel-header" role="tabpanel">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+              <h3 class="h6 mb-0 fw-bold">Cover Banner & Avatar Presentation</h3>
+              <span class="text-body-secondary small">Make your profile header stand out with a custom cover banner</span>
+            </div>
+            
+            <div class="card-body p-4">
+              <!-- Banner Cover Photo -->
+              <div class="mb-4">
+                <label class="form-label small fw-semibold">Cover Banner (Optional)</label>
+                {% if appearance.banner_image %}
+                <div class="mb-2 position-relative rounded-3 overflow-hidden border" style="height: 110px;">
+                  <img src="{{ appearance.banner_image.url }}" alt="Cover Banner" class="w-100 h-100 object-fit-cover">
+                </div>
+                {% endif %}
+                {{ form.banner_image }}
+                <div class="form-text small">Recommended resolution: 1200x400. Creates a stunning cover header.</div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Avatar Shape</label>
+                  {{ form.avatar_shape }}
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Avatar Border Styling</label>
+                  {{ form.avatar_border }}
+                </div>
+              </div>
+
+              <div class="row g-3 mb-0">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Header Alignment</label>
+                  {{ form.profile_alignment }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PANEL 3: BACKGROUND STUDIO -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="panel-background" role="tabpanel">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+              <h3 class="h6 mb-0 fw-bold">Page Background Studio</h3>
+              <span class="text-body-secondary small">Fine-tune colors, gradients, custom photo backgrounds & contrast filters</span>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Background Rendering Mode</label>
+                  {{ form.bg_type }}
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Solid Background Color</label>
+                  <div class="d-flex align-items-center gap-2">
+                    {{ form.bg_color }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label small fw-semibold">Custom CSS Gradient</label>
+                {{ form.bg_gradient }}
+                <div class="form-text small">Standard CSS syntax (e.g. <code>linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)</code>).</div>
+              </div>
+
+              <div class="p-3 bg-light rounded-4 border mb-4">
+                <label class="form-label small fw-semibold mb-2">Custom Background Photo</label>
+                {% if appearance.bg_image %}
+                <div class="d-flex align-items-center gap-3 mb-3 p-2 bg-white rounded-3 border">
+                  <img src="{{ appearance.bg_image.url }}" alt="Background Photo" class="rounded-2 object-fit-cover" style="width: 72px; height: 46px;">
+                  <div>
+                    <span class="small text-success fw-bold d-block"><i class="bi bi-check-circle me-1"></i>Active Background Photo</span>
+                    <span class="small text-body-secondary">Use the checkbox below to clear or choose a new file to replace.</span>
+                  </div>
+                </div>
+                {% endif %}
+                {{ form.bg_image }}
+
+                <div class="row g-3 mt-2">
+                  <div class="col-sm-6">
+                    <label class="form-label small fw-semibold d-flex justify-content-between">
+                      <span>Darkness Filter Overlay</span>
+                      <span class="text-primary fw-bold" id="bgOverlayDisplay">{{ appearance.bg_overlay_opacity|default:30 }}%</span>
+                    </label>
+                    {{ form.bg_overlay_opacity }}
+                    <div class="form-text small">Darkens the background photo so link text remains high-contrast and legible.</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label small fw-semibold d-flex justify-content-between">
+                      <span>Background Blur Radius</span>
+                      <span class="text-primary fw-bold" id="bgBlurDisplay">{{ appearance.bg_blur|default:0 }}px</span>
+                    </label>
+                    {{ form.bg_blur }}
+                    <div class="form-text small">Adds depth-of-field blur behind your cards.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PANEL 4: CARDS & BUTTONS -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="panel-buttons" role="tabpanel">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+              <h3 class="h6 mb-0 fw-bold">Card & Link Button Architecture</h3>
+              <span class="text-body-secondary small">Visual treatments, 3D shadows, corner radii & dynamic hover effects</span>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Visual Treatment</label>
+                  {{ form.button_style }}
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Corner Curvature</label>
+                  {{ form.button_shape }}
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Card Shadow & Elevation</label>
+                  {{ form.card_shadow }}
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Hover Animation Effect</label>
+                  {{ form.hover_effect }}
+                </div>
+              </div>
+
+              <div class="row g-3 mb-0">
+                <div class="col-sm-4">
+                  <label class="form-label small fw-semibold">Button Fill Color</label>
+                  {{ form.button_color }}
+                </div>
+                <div class="col-sm-4">
+                  <label class="form-label small fw-semibold">Button Text Color</label>
+                  {{ form.button_text_color }}
+                </div>
+                <div class="col-sm-4">
+                  <label class="form-label small fw-semibold">Accent Color (Glow / Badges)</label>
+                  {{ form.accent_color }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PANEL 5: TYPOGRAPHY & SOCIALS -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="panel-typography" role="tabpanel">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+              <h3 class="h6 mb-0 fw-bold">Typography & Social Icons Presentation</h3>
+              <span class="text-body-secondary small">Select your typography hierarchy and social icon positioning</span>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Font Family</label>
+                  {{ form.font_family }}
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Page Text Color</label>
+                  {{ form.text_color }}
+                </div>
+              </div>
+
+              <div class="row g-3 mb-0">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Social Icons Position</label>
+                  {{ form.social_position }}
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Social Icons Style</label>
+                  {{ form.social_style }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Save Action Button -->
+      <div class="d-flex justify-content-end mb-4">
+        <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold rounded-pill shadow-sm">
+          Save All Appearance Settings
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Right Column: Simulated Mobile Phone Preview -->
+  <div class="col-lg-5 col-xl-4">
+    <div class="sticky-top" style="top: 2rem;">
+      <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+        <span class="small fw-bold text-uppercase text-body-secondary d-inline-flex align-items-center gap-2">
+          <span class="spinner-grow spinner-grow-sm text-success" role="status" style="width: 0.5rem; height: 0.5rem;"></span>
+          Real-Time Live Preview
+        </span>
+        <a href="{% url 'public_profile' username=profile.username %}" target="_blank" class="small text-decoration-none fw-semibold text-primary">
+          Open bio &rarr;
+        </a>
+      </div>
+
+      <!-- Realistic iPhone Device Frame -->
+      <div class="mx-auto" style="width: 326px; height: 640px; background-color: #0b0f19; border-radius: 46px; padding: 11px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1); position: relative;">
+        <!-- Dynamic Island / Speaker Notch -->
+        <div style="position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 88px; height: 18px; background-color: #000000; border-radius: 20px; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 0 8px;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #1e293b;"></div>
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #0f172a; border: 1px solid #1e293b;"></div>
+        </div>
+
+        <!-- Live Preview Iframe -->
+        <iframe 
+          id="appearancePreviewFrame"
+          src="{% url 'preview_profile' username=profile.username %}" 
+          style="width: 100%; height: 100%; border: none; border-radius: 36px; background-color: #000000;"
+          title="Live Appearance Preview">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/preview.js' %}"></script>
+{% endblock %}
