@@ -6,6 +6,9 @@ set -o errexit
 pip install --upgrade pip
 pip install -r requirements.txt
 
+# Ensure media directories exist with write permissions
+mkdir -p media/avatars media/backgrounds media/banners media/thumbnails
+
 # Collect static assets with WhiteNoise compression
 python manage.py collectstatic --no-input
 

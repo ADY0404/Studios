@@ -4,7 +4,7 @@ LinkStudio is a production-grade, human-crafted creator and link-in-bio SaaS pla
 
 ---
 
-## 🌟 Key Features
+## key Features
 
 ### 1. Account & Security System
 - Full Django native authentication (Register, Login, Logout, Password Reset, Password Change).
@@ -61,14 +61,14 @@ LinkStudio is a production-grade, human-crafted creator and link-in-bio SaaS pla
   - Typography (*Inter*, *Plus Jakarta Sans*, *Outfit*, *DM Sans*, *Poppins*, *Space Grotesk*, *Syne*, *Playfair Display*, *JetBrains Mono*)
 - **Interactive Live Preview**: Simulated iPhone device frame that synchronizes in real time as you adjust settings.
 
-### 8. Full Admin Command Center (`/admin/`)
+### 8. Full Admin Command Center
 - Comprehensive Django Admin with multi-model inlines (Links, Socials, Services, and Appearance directly on Profile).
 - Quick inline list editing for links, services, socials, and bookings.
 - Administrative bulk actions: Verify/unverify creators, enable/disable links, confirm bookings, and export inquiries to CSV.
 
 ---
 
-## 🚀 Deployment on Render
+## Deployment on Render
 
 This repository includes a `render.yaml` blueprint and a `build.sh` script for zero-config deployment.
 
@@ -92,7 +92,7 @@ git push -u origin main
 
 ---
 
-## 💻 Local Development
+## Local Development
 
 ### 1. Clone & Setup Virtual Environment
 ```bash

@@ -262,6 +262,11 @@ def appearance_studio(request):
             app_obj.save()
             messages.success(request, 'Appearance saved! Your profile is updated.')
             return redirect('dashboard:appearance')
+        else:
+            for field, errs in form.errors.items():
+                for err in errs:
+                    field_name = 'General' if field == '__all__' else field.replace('_', ' ').capitalize()
+                    messages.error(request, f"{field_name}: {err}")
     else:
         form = AppearanceForm(instance=appearance)
 

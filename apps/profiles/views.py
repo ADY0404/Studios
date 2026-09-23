@@ -25,9 +25,7 @@ def public_profile_view(request, username):
     profile = get_object_or_404(
         Profile.objects.select_related('appearance', 'user'), 
         username__iexact=username, 
-        is_public=True,
-        user__is_staff=False,
-        user__is_superuser=False
+        is_public=True
     )
 
     # Increment view count atomically
@@ -63,9 +61,7 @@ def preview_profile_view(request, username):
     """
     profile = get_object_or_404(
         Profile.objects.select_related('appearance', 'user'), 
-        username__iexact=username,
-        user__is_staff=False,
-        user__is_superuser=False
+        username__iexact=username
     )
     links = profile.links.filter(is_active=True).order_by('order')
     socials = profile.social_accounts.filter(is_active=True).order_by('order')
