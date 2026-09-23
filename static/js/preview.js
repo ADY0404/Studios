@@ -65,11 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!doc || !doc.body) return;
 
       const pageContainer = doc.getElementById('creatorPageRoot') || doc.querySelector('.creator-page');
+      const bgLayer = doc.getElementById('creatorBgLayer');
+      const overlayLayer = doc.getElementById('creatorBgOverlay') || doc.querySelector('.creator-bg-overlay');
       const avatar = doc.querySelector('.creator-avatar');
       const header = doc.querySelector('header');
       const links = doc.querySelectorAll('.creator-link-btn');
       const cards = doc.querySelectorAll('.theme-card');
-      const overlayLayer = doc.querySelector('.creator-bg-overlay');
+      const buttons = doc.querySelectorAll('.btn');
+      const socialsTop = doc.getElementById('socialsTopContainer');
+      const socialsBottom = doc.getElementById('socialsBottomContainer');
+      const socialIcons = doc.querySelectorAll('.social-icon-circle');
       let bannerWrapper = doc.querySelector('.creator-banner-wrapper');
 
       if (!pageContainer) return;
@@ -87,14 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Background Rendering
+      const targetBg = bgLayer || pageContainer;
       if (currentBgImageData) {
-        pageContainer.style.background = `url('${currentBgImageData}') center/cover no-repeat fixed`;
+        targetBg.style.background = `url('${currentBgImageData}') center / cover no-repeat`;
+        if (overlayLayer) overlayLayer.style.display = 'block';
       } else if (bgTypeSelector && bgTypeSelector.value === 'color' && bgColorInput) {
-        pageContainer.style.background = bgColorInput.value;
+        targetBg.style.background = bgColorInput.value;
+        if (overlayLayer) overlayLayer.style.display = 'none';
       } else if (bgTypeSelector && bgTypeSelector.value === 'gradient' && bgGradientInput) {
-        pageContainer.style.background = bgGradientInput.value;
+        targetBg.style.background = bgGradientInput.value;
+        if (overlayLayer) overlayLayer.style.display = 'none';
       } else if (bgTypeSelector && bgTypeSelector.value === 'theme') {
-        pageContainer.style.background = '';
+        targetBg.style.background = '';
+        if (overlayLayer) overlayLayer.style.display = 'none';
       }
 
       // Background Overlay (Darkness & Blur)
@@ -138,11 +148,38 @@ document.addEventListener('DOMContentLoaded', () => {
           header.className = header.className.replace(/\btext-center\b/g, 'text-start');
           header.classList.remove('align-items-center');
           header.classList.add('align-items-start');
+          if (socialsTop) {
+            socialsTop.classList.remove('justify-content-center');
+            socialsTop.classList.add('justify-content-start');
+          }
         } else {
           header.className = header.className.replace(/\btext-start\b/g, 'text-center');
           header.classList.remove('align-items-start');
           header.classList.add('align-items-center');
+          if (socialsTop) {
+            socialsTop.classList.remove('justify-content-start');
+            socialsTop.classList.add('justify-content-center');
+          }
         }
+      }
+
+      // Social Icons Position
+      if (socialPositionSelector) {
+        if (socialPositionSelector.value === 'bottom') {
+          if (socialsTop) socialsTop.style.setProperty('display', 'none', 'important');
+          if (socialsBottom) socialsBottom.style.removeProperty('display');
+        } else {
+          if (socialsBottom) socialsBottom.style.setProperty('display', 'none', 'important');
+          if (socialsTop) socialsTop.style.removeProperty('display');
+        }
+      }
+
+      // Social Icons Style
+      if (socialStyleSelector) {
+        socialIcons.forEach(icon => {
+          icon.className = icon.className.replace(/\bsocial-style-\S+/g, '').trim();
+          icon.classList.add(`social-style-${socialStyleSelector.value}`);
+        });
       }
 
       // Card & Button Shapes, Styles, Shadows, and Hover Effects
@@ -180,6 +217,14 @@ document.addEventListener('DOMContentLoaded', () => {
           card.classList.add(`shadow-${cardShadowSelector.value}`);
         }
       });
+
+      // All buttons shape
+      if (buttonShapeSelector) {
+        buttons.forEach(btn => {
+          btn.className = btn.className.replace(/\bshape-\S+/g, '').trim();
+          btn.classList.add(`shape-${buttonShapeSelector.value}`);
+        });
+      }
 
       // Banner Cover Live Preview
       if (currentBannerImageData) {

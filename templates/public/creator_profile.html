@@ -37,37 +37,51 @@
 {% with app=appearance %}
 <body>
 
-<!-- Dynamic Background Rendering -->
-<div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }}"
-     id="creatorPageRoot"
+<!-- Dynamic Background Layer -->
+<div class="creator-bg-layer"
+     id="creatorBgLayer"
      style="
+       position: fixed;
+       top: 0; left: 0; width: 100%; height: 100%;
+       pointer-events: none;
+       z-index: 0;
        {% if app.bg_type == 'image' and app.bg_image %}
-         background: url('{{ app.bg_image.url }}') center / cover no-repeat fixed;
+         background: url('{{ app.bg_image.url }}') center / cover no-repeat;
        {% elif app.bg_type == 'color' %}
          background: {{ app.bg_color|default:'#0f172a' }};
        {% elif app.bg_type == 'gradient' %}
          background: {{ app.bg_gradient|default:'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }};
        {% endif %}
+     ">
+  <!-- Optional Darkness Overlay & Blur Layer -->
+  <div class="creator-bg-overlay"
+       id="creatorBgOverlay"
+       style="
+         position: absolute;
+         top: 0; left: 0; width: 100%; height: 100%;
+         background-color: rgba(0, 0, 0, calc({{ app.bg_overlay_opacity|default:30 }} / 100));
+         backdrop-filter: blur({{ app.bg_blur|default:0 }}px);
+         -webkit-backdrop-filter: blur({{ app.bg_blur|default:0 }}px);
+         {% if app.bg_type != 'image' or not app.bg_image %}
+           {% if not is_preview %}display: none;{% endif %}
+         {% endif %}
+       ">
+  </div>
+</div>
+
+<!-- Main Creator Page Shell -->
+<div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }}"
+     id="creatorPageRoot"
+     style="
        color: {{ app.text_color|default:'#f8fafc' }};
        --btn-color: {{ app.button_color|default:'#3b82f6' }};
        --btn-text: {{ app.button_text_color|default:'#ffffff' }};
        --theme-accent: {{ app.accent_color|default:'#3b82f6' }};
      ">
 
-  <!-- Optional Background Darkness Overlay & Blur Layer -->
-  {% if app.bg_type == 'image' and app.bg_image %}
-  <div class="creator-bg-overlay"
-       style="
-         background-color: rgba(0, 0, 0, calc({{ app.bg_overlay_opacity|default:30 }} / 100));
-         backdrop-filter: blur({{ app.bg_blur|default:0 }}px);
-         -webkit-backdrop-filter: blur({{ app.bg_blur|default:0 }}px);
-       ">
-  </div>
-  {% endif %}
-
   <!-- Messages for Public Visitors -->
   {% if messages and not is_preview %}
-  <div style="position: fixed; top: 1rem; right: 1rem; z-index: 1090; min-width: 280px; max-width: 400px;">
+  <div style="position: fixed; top: 1rem; right: 1rem; left: 1rem; margin: 0 auto; z-index: 1090; max-width: 420px;">
     {% for message in messages %}
     <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning' %}warning{% elif message.tags == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show shadow-sm py-2 px-3 small border-0" role="alert">
       <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
@@ -99,7 +113,7 @@
                  class="creator-avatar avatar-{{ app.avatar_shape|default:'circle' }} avatar-border-{{ app.avatar_border|default:'white' }}">
           {% else %}
             <div class="creator-avatar avatar-{{ app.avatar_shape|default:'circle' }} avatar-border-{{ app.avatar_border|default:'white' }} bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-2">
-              {{ profile.display_name|first|upper }}
+              {{ profile.display_name|default:profile.username|first|upper }}
             </div>
           {% endif %}
         </div>
@@ -108,7 +122,7 @@
         <h1 class="h4 fw-bold mb-1 d-inline-flex align-items-center" style="color: inherit; letter-spacing: -0.02em;">
           <span>{{ profile.display_name }}</span>
           {% if profile.is_verified %}
-          <span class="verified-badge" title="Verified Creator" style="color: {{ app.accent_color|default:'#3b82f6' }};">
+          <span class="verified-badge" title="Verified Creator" style="color: var(--theme-accent, #3b82f6);">
             <i class="bi bi-patch-check-fill"></i>
           </span>
           {% endif %}
@@ -119,7 +133,7 @@
 
         <!-- Title Tagline -->
         {% if profile.title_tagline %}
-        <div class="creator-tagline mb-2" style="color: {{ app.accent_color|default:'#3b82f6' }};">
+        <div class="creator-tagline mb-2" style="color: var(--theme-accent, #3b82f6);">
           {{ profile.title_tagline }}
         </div>
         {% endif %}
@@ -142,13 +156,13 @@
         <div class="mb-2">
           {% if not is_preview %}
           <a href="{% url 'download_vcard' username=profile.username %}"
-             class="btn btn-sm btn-outline-light rounded-pill px-3 py-1 d-inline-flex align-items-center gap-2 bg-white bg-opacity-10 text-reset border border-secondary-subtle"
+             class="btn btn-sm shape-pill px-3 py-1 d-inline-flex align-items-center gap-2 save-contact-btn"
              download>
             <i class="bi bi-person-vcard"></i>
             <span>Save My Contact</span>
           </a>
           {% else %}
-          <span class="btn btn-sm btn-outline-light rounded-pill px-3 py-1 d-inline-flex align-items-center gap-2 bg-white bg-opacity-10 text-reset border border-secondary-subtle opacity-75">
+          <span class="btn btn-sm shape-pill px-3 py-1 d-inline-flex align-items-center gap-2 save-contact-btn opacity-75">
             <i class="bi bi-person-vcard"></i>
             <span>Save My Contact</span>
           </span>
@@ -159,8 +173,9 @@
       </header>
 
       <!-- Social Media Icons (Top Placement) -->
-      {% if socials and app.social_position == 'top' %}
-      <div class="d-flex flex-wrap justify-content-center gap-2 mb-1">
+      {% if socials %}
+      <div id="socialsTopContainer" class="d-flex flex-wrap {% if app.profile_alignment == 'left' %}justify-content-start{% else %}justify-content-center{% endif %} gap-2 mb-1"
+           style="{% if app.social_position != 'top' %}display: none !important;{% endif %}">
         {% for s in socials %}
         <a href="{% if not is_preview %}{{ s.url }}{% else %}#{% endif %}"
            {% if not is_preview %}target="_blank" rel="noopener noreferrer"{% endif %}
@@ -185,7 +200,7 @@
               <img src="{{ link.thumbnail.url }}" alt="{{ link.title }}"
                    class="rounded-3 object-fit-cover flex-shrink-0" style="width: 40px; height: 40px;">
             {% elif link.icon %}
-              <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 bg-white bg-opacity-10" style="width: 40px; height: 40px; color: var(--theme-accent, #3b82f6);">
+              <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 bg-white bg-opacity-10" style="width: 40px; height: 40px; color: currentColor;">
                 {% include 'components/link_icons.html' with icon=link.icon %}
               </div>
             {% endif %}
@@ -247,13 +262,14 @@
       {% endif %}
 
       <!-- Direct Message / Lead Capture Box -->
-      {% if profile.show_contact_form and contact_form and not is_preview %}
+      {% if profile.show_contact_form %}
       <div class="card theme-card contact-lead-card shape-{{ app.button_shape|default:'rounded' }} shadow-{{ app.card_shadow|default:'subtle' }} mt-2">
         <div class="text-center mb-3">
           <h2 class="h6 fw-bold mb-1" style="color: inherit;">Send a Direct Message</h2>
           <p class="small opacity-75 mb-0">Inquiries sent directly to {{ profile.display_name }}</p>
         </div>
 
+        {% if not is_preview and contact_form %}
         <form method="POST" action="{% url 'submit_contact' username=profile.username %}">
           {% csrf_token %}
           <div class="mb-2">
@@ -276,12 +292,33 @@
             Send Inquiry
           </button>
         </form>
+        {% else %}
+        <!-- Live Preview State for Contact Form -->
+        <div class="opacity-75">
+          <div class="mb-2">
+            <label class="form-label small fw-semibold">Your Name</label>
+            <input type="text" class="form-control form-control-sm" placeholder="Visitor Name" disabled>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-semibold">Your Email</label>
+            <input type="email" class="form-control form-control-sm" placeholder="name@example.com" disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Message</label>
+            <textarea class="form-control form-control-sm" rows="2" placeholder="Write an inquiry..." disabled></textarea>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm shape-{{ app.button_shape|default:'rounded' }} w-100 py-2" disabled>
+            Send Inquiry
+          </button>
+        </div>
+        {% endif %}
       </div>
       {% endif %}
 
       <!-- Social Media Icons (Bottom Placement) -->
-      {% if socials and app.social_position == 'bottom' %}
-      <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
+      {% if socials %}
+      <div id="socialsBottomContainer" class="d-flex flex-wrap justify-content-center gap-2 mt-2"
+           style="{% if app.social_position != 'bottom' %}display: none !important;{% endif %}">
         {% for s in socials %}
         <a href="{% if not is_preview %}{{ s.url }}{% else %}#{% endif %}"
            {% if not is_preview %}target="_blank" rel="noopener noreferrer"{% endif %}
@@ -303,7 +340,7 @@
 </div>
 
 <!-- Booking Modal (Public View Only) -->
-{% if not is_preview %}
+{% if not is_preview and services %}
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalServiceTitle" aria-hidden="true" data-username="{{ profile.username }}">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg text-dark rounded-4">
@@ -315,9 +352,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <form method="POST" id="bookingSubmissionForm" action="{% if services %}{% url 'book_service' username=profile.username service_id=services.0.id %}{% endif %}">
+      <form method="POST" id="bookingSubmissionForm" action="{% url 'book_service' username=profile.username service_id=services.0.id %}">
         {% csrf_token %}
-        <input type="hidden" id="bookingFormServiceId" value="{% if services %}{{ services.0.id }}{% endif %}">
+        <input type="hidden" id="bookingFormServiceId" value="{{ services.0.id }}">
         <input type="hidden" name="booking_time" id="selectedTimeInput" value="">
 
         <div class="modal-body p-4">
@@ -367,7 +404,7 @@
 <!-- Bootstrap 5.3 Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-{% if not is_preview %}
+{% if not is_preview and services %}
 <script src="{% static 'js/booking.js' %}"></script>
 {% endif %}
 

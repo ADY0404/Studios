@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ValidationError
 
-from apps.profiles.models import Profile
+from apps.profiles.models import Profile, Appearance
 from apps.links.models import Link
 from apps.bookings.models import Service, Booking
 from apps.bookings.services import get_available_slots, reserve_booking
@@ -38,11 +38,14 @@ def public_profile_view(request, username):
     socials = profile.social_accounts.filter(is_active=True).order_by('order')
     services = profile.services.filter(is_active=True).order_by('order')
 
+    # Safely get or create appearance
+    appearance, _ = Appearance.objects.get_or_create(profile=profile)
+
     contact_form = ContactSubmissionForm() if profile.show_contact_form else None
 
     return render(request, 'public/creator_profile.html', {
         'profile': profile,
-        'appearance': profile.appearance,
+        'appearance': appearance,
         'links': links,
         'socials': socials,
         'services': services,
@@ -67,11 +70,14 @@ def preview_profile_view(request, username):
     links = profile.links.filter(is_active=True).order_by('order')
     socials = profile.social_accounts.filter(is_active=True).order_by('order')
     services = profile.services.filter(is_active=True).order_by('order')
+    # Safely get or create appearance
+    appearance, _ = Appearance.objects.get_or_create(profile=profile)
+
     contact_form = ContactSubmissionForm() if profile.show_contact_form else None
 
     return render(request, 'public/creator_profile.html', {
         'profile': profile,
-        'appearance': profile.appearance,
+        'appearance': appearance,
         'links': links,
         'socials': socials,
         'services': services,

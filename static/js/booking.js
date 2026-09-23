@@ -10,7 +10,10 @@ function openBookingModal(serviceId, serviceTitle, serviceDuration, servicePrice
   if (titleEl) titleEl.textContent = serviceTitle;
   
   const metaEl = document.getElementById('bookingModalMeta');
-  if (metaEl) metaEl.textContent = `${serviceDuration} mins · $${servicePrice}`;
+  if (metaEl) {
+    const priceText = parseFloat(servicePrice) > 0 ? `$${servicePrice}` : 'Free';
+    metaEl.textContent = `${serviceDuration} mins · ${priceText}`;
+  }
   
   const srvInput = document.getElementById('bookingFormServiceId');
   if (srvInput) srvInput.value = serviceId;
@@ -100,11 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const dateInput = document.getElementById('bookingDateInput');
   if (dateInput) {
-    dateInput.addEventListener('change', (e) => {
+    const handleDateUpdate = (e) => {
       const serviceId = document.getElementById('bookingFormServiceId').value;
       if (serviceId && e.target.value) {
         loadAvailableSlots(serviceId, e.target.value);
       }
-    });
+    };
+    dateInput.addEventListener('change', handleDateUpdate);
+    dateInput.addEventListener('input', handleDateUpdate);
   }
 });

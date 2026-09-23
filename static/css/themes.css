@@ -149,7 +149,7 @@
 /* Apply theme variables to link cards and session cards */
 .creator-page .btn-theme-link {
   background-color: var(--theme-card-bg);
-  color: var(--theme-card-text) !important;
+  color: var(--theme-card-text);
   border: 1px solid var(--theme-card-border);
   box-shadow: var(--theme-shadow);
   backdrop-filter: blur(12px);
@@ -158,7 +158,7 @@
 
 .creator-page .theme-card {
   background-color: var(--theme-card-bg);
-  color: var(--theme-card-text) !important;
+  color: var(--theme-card-text);
   border: 1px solid var(--theme-card-border);
   box-shadow: var(--theme-shadow);
   backdrop-filter: blur(12px);
@@ -167,5 +167,6 @@
 
 .creator-page .theme-badge {
   background-color: var(--theme-badge-bg);
-  color: var(--theme-badge-text) !important;
+  color: var(--theme-badge-text);
 }
+
