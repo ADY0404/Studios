@@ -44,6 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (themeSelector) {
         themeSelector.value = themeKey;
       }
+      if (bgTypeSelector) {
+        bgTypeSelector.value = 'theme';
+      }
+      currentBgImageData = null;
 
       // Highlight active card
       themeCards.forEach(c => {
@@ -79,6 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!pageContainer) return;
 
+      // Ensure root container stays transparent so dynamic bgLayer shows through
+      pageContainer.style.background = 'transparent';
+
       // Theme class
       if (themeSelector && themeSelector.value) {
         pageContainer.className = pageContainer.className.replace(/\btheme-\S+/g, '').trim();
@@ -93,8 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Background Rendering
       const targetBg = bgLayer || pageContainer;
-      if (currentBgImageData) {
-        targetBg.style.background = `url('${currentBgImageData}') center / cover no-repeat`;
+      const savedBgImg = (function() {
+        try {
+          const el = doc.getElementById('appearanceData');
+          return el ? JSON.parse(el.textContent).bgImage : '';
+        } catch(e) { return ''; }
+      })();
+      const activeBgImg = currentBgImageData || savedBgImg;
+
+      if (bgTypeSelector && bgTypeSelector.value === 'image' && activeBgImg) {
+        targetBg.style.background = `url('${activeBgImg}') center / cover no-repeat`;
         if (overlayLayer) overlayLayer.style.display = 'block';
       } else if (bgTypeSelector && bgTypeSelector.value === 'color' && bgColorInput) {
         targetBg.style.background = bgColorInput.value;
@@ -103,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         targetBg.style.background = bgGradientInput.value;
         if (overlayLayer) overlayLayer.style.display = 'none';
       } else if (bgTypeSelector && bgTypeSelector.value === 'theme') {
-        targetBg.style.background = '';
+        targetBg.style.background = 'var(--theme-bg)';
         if (overlayLayer) overlayLayer.style.display = 'none';
       }
 

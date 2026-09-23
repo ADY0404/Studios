@@ -37,14 +37,14 @@
 <body>
 {% with app=appearance %}
 
-<!-- Dynamic Background Layer -->
-<div class="creator-bg-layer" id="creatorBgLayer">
-  <!-- Optional Darkness Overlay & Blur Layer -->
-  <div class="creator-bg-overlay" id="creatorBgOverlay"></div>
-</div>
-
 <!-- Main Creator Page Shell -->
 <div class="creator-page theme-{{ app.theme|default:'midnight_dark' }} font-{{ app.font_family|default:'inter' }} social-pos-{{ app.social_position|default:'top' }}" id="creatorPageRoot">
+
+  <!-- Dynamic Background Layer -->
+  <div class="creator-bg-layer" id="creatorBgLayer">
+    <!-- Optional Darkness Overlay & Blur Layer -->
+    <div class="creator-bg-overlay" id="creatorBgOverlay"></div>
+  </div>
 
   <!-- Messages for Public Visitors -->
   {% if messages and not is_preview %}
@@ -404,6 +404,7 @@
       var overlay = document.getElementById('creatorBgOverlay');
 
       if (root) {
+        root.style.background = 'transparent';
         root.style.color = app.textColor;
         root.style.setProperty('--btn-color', app.buttonColor);
         root.style.setProperty('--btn-text', app.buttonTextColor);
@@ -426,7 +427,7 @@
           bgLayer.style.background = app.bgGradient;
           if (overlay && !app.isPreview) overlay.style.display = 'none';
         } else if (app.bgType === 'theme') {
-          bgLayer.style.background = '';
+          bgLayer.style.background = 'var(--theme-bg)';
           if (overlay && !app.isPreview) overlay.style.display = 'none';
         }
       }
