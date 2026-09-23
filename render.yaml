@@ -27,4 +27,9 @@ services:
         value: "True"
       - key: PYTHON_VERSION
         value: "3.11.9"
-
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false # Cloudinary Dashboard -> Cloud Name
+      - key: CLOUDINARY_API_KEY
+        sync: false # Cloudinary Dashboard -> API Key
+      - key: CLOUDINARY_API_SECRET
+        sync: false # Cloudinary Dashboard -> API Secret
