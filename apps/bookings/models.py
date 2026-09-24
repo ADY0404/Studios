@@ -93,3 +93,21 @@ class Booking(models.Model):
     @property
     def is_upcoming(self):
         return self.start_time >= timezone.now()
+
+    # FIX: Explicit booking status state machine transitions
+    VALID_TRANSITIONS = {
+        'pending': {'confirmed', 'rejected', 'cancelled'},
+        'confirmed': {'completed', 'cancelled'},
+        'rejected': set(),
+        'cancelled': set(),
+        'completed': set(),
+    }
+
+    def can_transition_to(self, new_status):
+        """
+        Returns True if transition from current status to new_status is permitted.
+        Disallows transitions out of terminal states (completed, cancelled, rejected).
+        """
+        allowed = self.VALID_TRANSITIONS.get(self.status, set())
+        return new_status in allowed
+

@@ -62,6 +62,10 @@ def get_available_slots(profile, service, target_date):
     return slots
 
 
+# FIX / CONCURRENCY NOTE:
+# select_for_update() is a no-op on SQLite backend (Django ignores it or logs a warning without acquiring row locks).
+# Therefore, the atomic double-booking prevention guard is only strictly enforced under production backends like MySQL/MariaDB.
+# When running locally with DB_ENGINE=sqlite, concurrency tests cannot guarantee lock exclusivity.
 @transaction.atomic
 def reserve_booking(profile, service, visitor_name, visitor_email, visitor_phone, notes, slot_start_dt):
     """

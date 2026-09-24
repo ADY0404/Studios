@@ -107,6 +107,37 @@
       </div>
       {% endif %}
     </div>
+
+    {% if bookings.has_other_pages %}
+    <div class="card-footer bg-white border-top py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <span class="small text-body-secondary">
+        Showing {{ bookings.start_index }} to {{ bookings.end_index }} of {{ bookings.paginator.count }} bookings
+      </span>
+      <nav aria-label="Bookings pagination">
+        <ul class="pagination pagination-sm mb-0">
+          {% if bookings.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ bookings.previous_page_number }}{% if current_status != 'all' %}&status={{ current_status|urlencode }}{% endif %}">Previous</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+
+          <li class="page-item active">
+            <span class="page-link">{{ bookings.number }} / {{ bookings.paginator.num_pages }}</span>
+          </li>
+
+          {% if bookings.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ bookings.next_page_number }}{% if current_status != 'all' %}&status={{ current_status|urlencode }}{% endif %}">Next</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
   </div>
 
   <!-- Section 2: Services Offered -->

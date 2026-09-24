@@ -47,3 +47,17 @@ class ProfileTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/vcard; charset=utf-8')
         self.assertIn('attachment; filename="eddiescott.vcf"', response['Content-Disposition'])
+
+    def test_vcard_escaping_special_characters(self):
+        profile = self.user.profile
+        profile.display_name = 'Doe, Jr.; John'
+        profile.bio = 'Line 1\r\nLine 2; with, semicolons & commas\\backslashes'
+        profile.save()
+
+        vcard_text = generate_vcard_content(profile)
+        self.assertIn(r'FN:Doe\, Jr.\; John', vcard_text)
+        self.assertIn(r'N:Jr.\; John;Doe\,;;;', vcard_text)
+        self.assertIn(r'NOTE:Line 1 Line 2\; with\, semicolons & commas\\backslashes', vcard_text)
+        self.assertTrue(vcard_text.startswith("BEGIN:VCARD\r\n"))
+        self.assertTrue(vcard_text.endswith("END:VCARD\r\n"))
+

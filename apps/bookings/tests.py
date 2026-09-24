@@ -79,3 +79,73 @@ class BookingTests(TestCase):
         available = get_available_slots(self.profile, self.service, target_wednesday)
         self.assertNotIn('09:00', available)
         self.assertIn('09:30', available)
+
+    def test_booking_state_machine_transitions(self):
+        booking = Booking.objects.create(
+            profile=self.profile,
+            service=self.service,
+            visitor_name='Sam Test',
+            visitor_email='sam@example.com',
+            start_time=timezone.now() + timedelta(days=1),
+            end_time=timezone.now() + timedelta(days=1, minutes=30),
+            status='pending'
+        )
+        # Valid transitions from pending
+        self.assertTrue(booking.can_transition_to('confirmed'))
+        self.assertTrue(booking.can_transition_to('rejected'))
+        self.assertTrue(booking.can_transition_to('cancelled'))
+        # Invalid direct transitions from pending
+        self.assertFalse(booking.can_transition_to('completed'))
+
+        # Move to confirmed
+        booking.status = 'confirmed'
+        self.assertTrue(booking.can_transition_to('completed'))
+        self.assertTrue(booking.can_transition_to('cancelled'))
+        self.assertFalse(booking.can_transition_to('pending'))
+        self.assertFalse(booking.can_transition_to('rejected'))
+
+        # Terminal state: completed
+        booking.status = 'completed'
+        self.assertFalse(booking.can_transition_to('pending'))
+        self.assertFalse(booking.can_transition_to('confirmed'))
+        self.assertFalse(booking.can_transition_to('cancelled'))
+
+        # Terminal state: cancelled
+        booking.status = 'cancelled'
+        self.assertFalse(booking.can_transition_to('confirmed'))
+
+    def test_update_booking_status_view_transition_enforcement(self):
+        booking = Booking.objects.create(
+            profile=self.profile,
+            service=self.service,
+            visitor_name='Jane Test',
+            visitor_email='jane@example.com',
+            start_time=timezone.now() + timedelta(days=2),
+            end_time=timezone.now() + timedelta(days=2, minutes=30),
+            status='pending'
+        )
+        self.client.force_login(self.user)
+
+        # 1. Invalid transition: pending -> completed
+        resp = self.client.post(f'/dashboard/bookings/{booking.id}/status/', {'status': 'completed'})
+        self.assertEqual(resp.status_code, 302)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, 'pending')
+
+        # 2. Valid transition: pending -> confirmed
+        from django.core import mail
+        resp = self.client.post(f'/dashboard/bookings/{booking.id}/status/', {'status': 'confirmed'})
+        self.assertEqual(resp.status_code, 302)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, 'confirmed')
+        self.assertTrue(len(mail.outbox) > 0)
+        self.assertEqual(mail.outbox[-1].to, ['jane@example.com'])
+        self.assertIn('Confirmed', mail.outbox[-1].subject)
+
+        # 3. Invalid transition from confirmed: confirmed -> pending
+        resp = self.client.post(f'/dashboard/bookings/{booking.id}/status/', {'status': 'pending'})
+        self.assertEqual(resp.status_code, 302)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, 'confirmed')
+
+

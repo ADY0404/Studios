@@ -133,6 +133,12 @@ def book_service_view(request, username, service_id):
     """
     Submits booking request with atomic double-booking prevention.
     """
+    # SECURITY: Rate limit booking requests to 5 per 10 minutes per IP
+    from apps.profiles.ratelimit import is_rate_limited
+    if is_rate_limited(request, 'book_service', max_attempts=5, timeout_seconds=600):
+        messages.error(request, "Too many booking requests from your network. Please wait a few minutes before trying again.")
+        return redirect('public_profile', username=username)
+
     profile = get_object_or_404(Profile, username__iexact=username, is_public=True)
     service = get_object_or_404(Service, id=service_id, profile=profile, is_active=True)
     form = BookingRequestForm(request.POST)
@@ -159,6 +165,8 @@ def book_service_view(request, username, service_id):
                 notes=form.cleaned_data['notes'],
                 slot_start_dt=slot_start_dt
             )
+            from apps.bookings.emails import send_booking_requested_email
+            send_booking_requested_email(booking)
             messages.success(
                 request, 
                 f"Booking requested successfully for {service.title} on {booking_date.strftime('%b %d, %Y')} at {booking_time_str}! {profile.display_name} will confirm shortly."
@@ -176,6 +184,12 @@ def submit_contact_view(request, username):
     """
     Saves voluntary visitor contact submissions.
     """
+    # SECURITY: Rate limit contact form submissions to 5 per 10 minutes per IP
+    from apps.profiles.ratelimit import is_rate_limited
+    if is_rate_limited(request, 'submit_contact', max_attempts=5, timeout_seconds=600):
+        messages.error(request, "Too many messages sent from your network. Please wait a few minutes before trying again.")
+        return redirect('public_profile', username=username)
+
     profile = get_object_or_404(Profile, username__iexact=username, is_public=True)
     if not profile.show_contact_form:
         raise Http404("Contact form disabled.")
@@ -185,6 +199,8 @@ def submit_contact_view(request, username):
         submission = form.save(commit=False)
         submission.profile = profile
         submission.save()
+        from apps.contacts.emails import send_contact_submission_email
+        send_contact_submission_email(submission)
         messages.success(request, f"Thanks for getting in touch! Your message was sent to {profile.display_name}.")
     else:
         messages.error(request, "Please fill in all required contact fields properly.")

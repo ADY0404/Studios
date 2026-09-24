@@ -22,6 +22,7 @@ class AccountTests(TestCase):
                 validate_username(name)
 
     def test_user_registration_flow(self):
+        from django.core import mail
         response = self.client.post('/auth/register/', {
             'username': 'creatorjane',
             'display_name': 'Jane Doe',
@@ -35,3 +36,7 @@ class AccountTests(TestCase):
         self.assertIsNotNone(user)
         self.assertEqual(user.profile.display_name, 'Jane Doe')
         self.assertEqual(user.profile.appearance.theme, 'midnight_dark')
+        # Check confirmation email sent
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Welcome to LinkStudio", mail.outbox[0].subject)
+        self.assertEqual(mail.outbox[0].to, ['jane@example.com'])

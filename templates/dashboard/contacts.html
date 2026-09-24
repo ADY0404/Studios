@@ -7,7 +7,7 @@
 <div class="card border-0 shadow-sm">
   <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3">
     <div>
-      <h3 class="h6 mb-0 fw-bold">Visitor Inquiries ({{ contacts.count }})</h3>
+      <h3 class="h6 mb-0 fw-bold">Visitor Inquiries ({{ contacts.paginator.count|default:contacts.count }})</h3>
       <span class="text-body-secondary small">Messages submitted through your public contact form</span>
     </div>
 
@@ -77,5 +77,36 @@
     </div>
     {% endif %}
   </div>
+
+  {% if contacts.has_other_pages %}
+  <div class="card-footer bg-white border-top py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <span class="small text-body-secondary">
+      Showing {{ contacts.start_index }} to {{ contacts.end_index }} of {{ contacts.paginator.count }} contacts
+    </span>
+    <nav aria-label="Contacts pagination">
+      <ul class="pagination pagination-sm mb-0">
+        {% if contacts.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ contacts.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">{{ contacts.number }} / {{ contacts.paginator.num_pages }}</span>
+        </li>
+
+        {% if contacts.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ contacts.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

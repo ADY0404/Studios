@@ -22,6 +22,8 @@ def register_view(request):
                 user.profile.display_name = form.cleaned_data.get('display_name') or username
                 user.profile.save()
             login(request, user)
+            from apps.accounts.emails import send_account_confirmation_email
+            send_account_confirmation_email(user)
             messages.success(request, f"Welcome to LinkStudio, {user.profile.display_name}! Your creator profile is ready.")
             return redirect('dashboard:overview')
     else:
