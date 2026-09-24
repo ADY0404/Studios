@@ -2,21 +2,17 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf import settings
 from django.views.static import serve
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from apps.profiles import views as profile_views
 
 def home_view(request):
     if request.user.is_authenticated:
-        from django.shortcuts import redirect
-        if request.user.is_staff or request.user.is_superuser:
-            return redirect('/admin/')
         return redirect('dashboard:overview')
     return render(request, 'home.html')
 
 urlpatterns = [
     # Administration
-    path('admin/', admin.site.urls),
     path('cass/', admin.site.urls),
     
     # Home landing

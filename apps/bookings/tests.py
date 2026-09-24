@@ -203,8 +203,10 @@ class BookingTests(TestCase):
         admin = User.objects.create_superuser('bossadmin', 'admin@linkstudio.app', 'SecretAdmin123!')
         self.client.force_login(admin)
 
+        from django.urls import reverse
+        changelist_url = reverse('admin:bookings_booking_changelist')
         # Trigger confirm_bookings admin action
-        response = self.client.post('/admin/bookings/booking/', {
+        response = self.client.post(changelist_url, {
             'action': 'confirm_bookings',
             '_selected_action': [booking.id]
         })

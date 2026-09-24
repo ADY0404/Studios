@@ -111,6 +111,7 @@ Open your browser to:
 - **Home:** http://127.0.0.1:8000/
 - **Creator Demo:** http://127.0.0.1:8000/eddiescott/
 - **Dashboard:** http://127.0.0.1:8000/dashboard/
+- **Admin Console:** http://127.0.0.1:8000/cass/
 
 ---
 

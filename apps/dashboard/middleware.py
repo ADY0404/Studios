@@ -7,7 +7,7 @@ class CreatorRequiredMiddleware:
     """
     Ensures any authenticated user (creators and administrators) accessing
     dashboard routes has a valid Profile and Appearance instance provisioned.
-    Administrators have full access to both /admin/ and /dashboard/.
+    Administrators have full access to both /cass/ and /dashboard/.
     """
     def __init__(self, get_response):
         self.get_response = get_response

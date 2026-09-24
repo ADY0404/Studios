@@ -78,7 +78,7 @@
         {% if request.user.is_staff or request.user.is_superuser %}
         <li class="my-2 border-top"></li>
         <li class="nav-item">
-          <a href="/admin/" class="nav-link text-warning-emphasis bg-warning-subtle" target="_blank">
+          <a href="{% url 'admin:index' %}" class="nav-link text-warning-emphasis bg-warning-subtle" target="_blank">
             <i class="bi bi-shield-lock-fill text-warning"></i>
             <span>Admin Console</span>
           </a>
