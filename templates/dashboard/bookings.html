@@ -54,7 +54,7 @@
                 <div class="small text-body-secondary">{{ b.start_time|date:"h:i A" }} – {{ b.end_time|date:"h:i A" }}</div>
               </td>
               <td class="py-3">
-                <div class="small fw-bold text-primary">${{ b.service.price }}</div>
+                <div class="small fw-bold text-primary">GH₵{{ b.service.price }}</div>
                 <span class="badge text-bg-light border" style="font-size: 0.65rem;">{{ b.payment_status|upper }}</span>
               </td>
               <td class="py-3">
@@ -161,7 +161,7 @@
           <div class="card h-100 border rounded-3 p-3">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <h4 class="h6 fw-bold mb-0 text-dark">{{ s.title }}</h4>
-              <span class="badge text-bg-primary">${{ s.price }}</span>
+              <span class="badge text-bg-primary">GH₵{{ s.price }}</span>
             </div>
             <div class="small text-body-secondary mb-2">
               <i class="bi bi-clock me-1"></i> {{ s.duration_minutes }} minutes
@@ -359,7 +359,7 @@
               <input type="number" name="duration_minutes" class="form-control" value="30" min="5" step="5" required>
             </div>
             <div class="col-6">
-              <label class="form-label small fw-semibold">Price (USD)</label>
+              <label class="form-label small fw-semibold">Price (GH₵)</label>
               <input type="number" name="price" class="form-control" value="50.00" min="0" step="0.01" required>
             </div>
           </div>

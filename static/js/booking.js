@@ -11,7 +11,7 @@ function openBookingModal(serviceId, serviceTitle, serviceDuration, servicePrice
   
   const metaEl = document.getElementById('bookingModalMeta');
   if (metaEl) {
-    const priceText = parseFloat(servicePrice) > 0 ? `$${servicePrice}` : 'Free';
+    const priceText = parseFloat(servicePrice) > 0 ? `GH₵${servicePrice}` : 'Free';
     metaEl.textContent = `${serviceDuration} mins · ${priceText}`;
   }
   

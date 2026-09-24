@@ -205,7 +205,7 @@
               <div class="small opacity-75 mt-1"><i class="bi bi-clock me-1"></i> {{ s.duration_minutes }} mins</div>
             </div>
             <span class="badge theme-badge rounded-pill px-3 py-1">
-              {% if s.price > 0 %}${{ s.price }}{% else %}Free{% endif %}
+              {% if s.price > 0 %}GH₵{{ s.price }}{% else %}Free{% endif %}
             </span>
           </div>
 
@@ -317,7 +317,7 @@
       <div class="modal-header border-bottom py-3 px-4">
         <div>
           <h5 class="modal-title fw-bold" id="bookingModalServiceTitle">Service Title</h5>
-          <span class="small text-primary fw-semibold" id="bookingModalMeta">30 mins · $50</span>
+          <span class="small text-primary fw-semibold" id="bookingModalMeta">30 mins · GH₵50</span>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -352,7 +352,7 @@
 
           <div class="mb-3">
             <label class="form-label small fw-semibold" for="bookingVisitorPhone">Phone (Optional)</label>
-            <input type="text" name="visitor_phone" id="bookingVisitorPhone" class="form-control" placeholder="+1 (555) 000-0000">
+            <input type="text" name="visitor_phone" id="bookingVisitorPhone" class="form-control" placeholder="+233 24 123 4567">
           </div>
 
           <div class="mb-2">

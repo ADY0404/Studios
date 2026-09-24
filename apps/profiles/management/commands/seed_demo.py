@@ -44,11 +44,11 @@ class Command(BaseCommand):
 
         profile = eddie_user.profile
         profile.display_name = 'Eddie Scott'
-        profile.bio = "Creator, Consultant & Speaker. Helping modern founders scale indie products from $0 to $100k ARR."
-        profile.location = "San Francisco, CA"
+        profile.bio = "Creator, Consultant & Speaker. Helping modern founders scale indie products from GH₵0 to GH₵100k ARR."
+        profile.location = "Accra, Ghana"
         profile.website = "https://eddiescott.dev"
         profile.public_email = "hello@eddiescott.dev"
-        profile.phone = "+1 (415) 888-2345"
+        profile.phone = "+233 24 888 2345"
         profile.show_contact_form = True
         profile.show_save_contact = True
         profile.is_public = True
@@ -148,7 +148,7 @@ class Command(BaseCommand):
             service=service1,
             visitor_name='Sarah Jenkins',
             visitor_email='sarah.j@startupco.io',
-            visitor_phone='+1 555 234 5678',
+            visitor_phone='+233 24 234 5678',
             notes='We need advice on shifting from freemium to premium tiers.',
             start_time=tomorrow_10am,
             end_time=tomorrow_10am + timedelta(minutes=30),
@@ -175,7 +175,7 @@ class Command(BaseCommand):
             profile=profile,
             name='Liam Chen',
             email='liam@venturepartners.com',
-            phone='+1 415 777 9999',
+            phone='+233 24 777 9999',
             message='Hi Eddie, saw your latest podcast on creator monetization. Would love to invite you as a keynote speaker for our Creator Summit next month!'
         )
         ContactSubmission.objects.create(

@@ -8,6 +8,6 @@ class ContactSubmissionForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your Name', 'required': True}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'your.email@example.com', 'required': True}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone number (optional)'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+233 24 123 4567 or 024 123 4567'}),
             'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'How can we help or collaborate?'}),
         }

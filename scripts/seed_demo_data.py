@@ -41,10 +41,10 @@ def seed():
             'username': 'eddiescott',
             'display_name': 'Eddie Scott',
             'bio': 'Creator, Consultant & Speaker.\nHelping founders and builders scale modern products.',
-            'location': 'San Francisco, CA',
+            'location': 'Accra, Ghana',
             'website': 'https://eddiescott.com',
             'public_email': 'hello@eddiescott.com',
-            'phone': '+1 (555) 234-5678',
+            'phone': '+233 24 234 5678',
             'show_contact_form': True,
             'show_save_contact': True,
             'is_public': True
@@ -52,10 +52,10 @@ def seed():
     )
     profile.display_name = 'Eddie Scott'
     profile.bio = 'Creator, Consultant & Speaker.\nHelping founders and builders scale modern products.'
-    profile.location = 'San Francisco, CA'
+    profile.location = 'Accra, Ghana'
     profile.website = 'https://eddiescott.com'
     profile.public_email = 'hello@eddiescott.com'
-    profile.phone = '+1 (555) 234-5678'
+    profile.phone = '+233 24 234 5678'
     profile.show_contact_form = True
     profile.show_save_contact = True
     profile.is_public = True
@@ -119,8 +119,8 @@ def seed():
 
     # 5. Bookable Services
     services_data = [
-        ('1-on-1 Growth Consultation', 'Dedicated 30-minute advisory call covering strategy, audience building, and tech stack.', 30, 75.00, 'Meeting link provided via email.', 1),
-        ('Comprehensive Product Audit', 'Deep dive 60-minute teardown of your creator platform, UX flows, and retention levers.', 60, 150.00, 'Please share your product link in notes.', 2),
+        ('1-on-1 Growth Consultation', 'Dedicated 30-minute advisory call covering strategy, audience building, and tech stack.', 30, 150.00, 'Meeting link provided via email.', 1),
+        ('Comprehensive Product Audit', 'Deep dive 60-minute teardown of your creator platform, UX flows, and retention levers.', 60, 300.00, 'Please share your product link in notes.', 2),
     ]
 
     for title, desc, dur, price, instr, order in services_data:
@@ -131,7 +131,7 @@ def seed():
                 'description': desc,
                 'duration_minutes': dur,
                 'price': price,
-                'currency': 'USD',
+                'currency': 'GHS',
                 'instructions': instr,
                 'order': order,
                 'is_active': True

@@ -39,7 +39,7 @@ class BookingRequestForm(forms.Form):
     visitor_phone = forms.CharField(
         max_length=30, 
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Phone number (optional)'})
+        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': '+233 24 123 4567 or 024 123 4567'})
     )
     booking_date = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-input', 'type': 'date', 'required': True})
