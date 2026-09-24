@@ -35,6 +35,7 @@ class Profile(models.Model):
     
     title_tagline = models.CharField(max_length=100, blank=True, help_text="Short headline (e.g. 'Founder & Designer' or 'Music Producer')")
     is_verified = models.BooleanField(default=True, help_text="Show verified creator badge")
+    is_email_verified = models.BooleanField(default=False, help_text="Whether the creator has confirmed their email address")
     
     # Analytics aggregates
     total_views = models.PositiveIntegerField(default=0)

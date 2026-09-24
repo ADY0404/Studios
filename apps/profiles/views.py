@@ -36,8 +36,10 @@ def public_profile_view(request, username):
     socials = profile.social_accounts.filter(is_active=True).order_by('order')
     services = profile.services.filter(is_active=True).order_by('order')
 
-    # Safely get or create appearance
-    appearance, _ = Appearance.objects.get_or_create(profile=profile)
+    # Safely get appearance from prefetched relation or get_or_create fallback
+    appearance = getattr(profile, 'appearance', None)
+    if not appearance:
+        appearance, _ = Appearance.objects.get_or_create(profile=profile)
 
     contact_form = ContactSubmissionForm() if profile.show_contact_form else None
 
@@ -66,8 +68,10 @@ def preview_profile_view(request, username):
     links = profile.links.filter(is_active=True).order_by('order')
     socials = profile.social_accounts.filter(is_active=True).order_by('order')
     services = profile.services.filter(is_active=True).order_by('order')
-    # Safely get or create appearance
-    appearance, _ = Appearance.objects.get_or_create(profile=profile)
+    # Safely get appearance from prefetched relation or get_or_create fallback
+    appearance = getattr(profile, 'appearance', None)
+    if not appearance:
+        appearance, _ = Appearance.objects.get_or_create(profile=profile)
 
     contact_form = ContactSubmissionForm() if profile.show_contact_form else None
 
@@ -165,8 +169,9 @@ def book_service_view(request, username, service_id):
                 notes=form.cleaned_data['notes'],
                 slot_start_dt=slot_start_dt
             )
-            from apps.bookings.emails import send_booking_requested_email
+            from apps.bookings.emails import send_booking_requested_email, send_booking_receipt_to_visitor
             send_booking_requested_email(booking)
+            send_booking_receipt_to_visitor(booking)
             messages.success(
                 request, 
                 f"Booking requested successfully for {service.title} on {booking_date.strftime('%b %d, %Y')} at {booking_time_str}! {profile.display_name} will confirm shortly."

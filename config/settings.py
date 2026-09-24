@@ -95,11 +95,14 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 # Database Configuration - Supports MariaDB (MySQL dialect) and SQLite fallback
 DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.mysql')
+DB_CONN_MAX_AGE = int(os.getenv('DB_CONN_MAX_AGE', '600'))
+
 if 'sqlite' in DB_ENGINE.lower():
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            'CONN_MAX_AGE': DB_CONN_MAX_AGE,
         }
     }
 else:
@@ -120,6 +123,8 @@ else:
             'HOST': os.getenv('DB_HOST', '127.0.0.1'),
             'PORT': os.getenv('DB_PORT', '3306'),
             'OPTIONS': db_options,
+            'CONN_MAX_AGE': DB_CONN_MAX_AGE,
+            'CONN_HEALTH_CHECKS': True,
         }
     }
 
@@ -191,6 +196,9 @@ else:
             'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
         },
     }
+
+# WhiteNoise static file caching (1 year in production for speed, 0 in dev)
+WHITENOISE_MAX_AGE = 31536000 if not DEBUG else 0
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

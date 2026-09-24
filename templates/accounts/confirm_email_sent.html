@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Password Updated — LinkStudio{% endblock %}
+{% block title %}Confirm Your Email — LinkStudio{% endblock %}
 
 {% block content %}
 <div class="min-vh-100 d-flex flex-column justify-content-center py-5 bg-light">
@@ -19,21 +19,30 @@
           </a>
         </div>
 
-        <!-- Success Card -->
+        <!-- Confirm Card -->
         <div class="card border-0 shadow-sm rounded-4 p-4 bg-white text-center">
           <div class="mb-3">
-            <div class="d-inline-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle" style="width: 56px; height: 56px;">
-              <i class="bi bi-check-circle fs-3"></i>
+            <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle" style="width: 56px; height: 56px;">
+              <i class="bi bi-envelope-open fs-3"></i>
             </div>
           </div>
 
-          <h1 class="h5 fw-bold mb-2">Password reset complete</h1>
+          <h1 class="h5 fw-bold mb-2">Check your email</h1>
+          <p class="text-body-secondary small mb-3">
+            We've sent a verification link to:
+          </p>
+          <div class="bg-light p-2 rounded-3 text-dark fw-semibold small mb-3 font-monospace">
+            {{ email }}
+          </div>
           <p class="text-body-secondary small mb-4">
-            Your password has been changed successfully. You can now sign in with your new password.
+            Click the link in the email to activate your account. You cannot sign in until your email is confirmed.
           </p>
 
-          <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100 py-2 fw-medium">
-            Sign In Now
+          <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100 py-2 fw-medium mb-2">
+            Back to Sign In
+          </a>
+          <a href="{% url 'accounts:resend_confirmation' %}" class="btn btn-outline-secondary btn-sm w-100 py-1">
+            Resend Verification Email
           </a>
         </div>
 
@@ -42,3 +51,4 @@
   </div>
 </div>
 {% endblock %}
+

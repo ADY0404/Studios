@@ -91,8 +91,14 @@ class BookingAdmin(admin.ModelAdmin):
 
     @admin.action(description="Mark selected bookings as Confirmed")
     def confirm_bookings(self, request, queryset):
-        updated = queryset.update(status='confirmed')
-        self.message_user(request, f"{updated} booking(s) marked as confirmed.")
+        from apps.bookings.emails import send_booking_status_update_email
+        count = 0
+        for booking in queryset:
+            booking.status = 'confirmed'
+            booking.save(update_fields=['status', 'updated_at'])
+            send_booking_status_update_email(booking)
+            count += 1
+        self.message_user(request, f"{count} booking(s) marked as confirmed and notification emails sent.")
 
     @admin.action(description="Mark selected bookings as Completed")
     def complete_bookings(self, request, queryset):
@@ -101,10 +107,27 @@ class BookingAdmin(admin.ModelAdmin):
 
     @admin.action(description="Cancel selected bookings")
     def cancel_bookings(self, request, queryset):
-        updated = queryset.update(status='cancelled')
-        self.message_user(request, f"{updated} booking(s) cancelled.")
+        from apps.bookings.emails import send_booking_status_update_email
+        count = 0
+        for booking in queryset:
+            booking.status = 'cancelled'
+            booking.save(update_fields=['status', 'updated_at'])
+            send_booking_status_update_email(booking)
+            count += 1
+        self.message_user(request, f"{count} booking(s) cancelled and notification emails sent.")
 
     @admin.action(description="Mark selected bookings as Paid")
     def mark_paid(self, request, queryset):
         updated = queryset.update(payment_status='paid')
         self.message_user(request, f"{updated} booking(s) marked as paid.")
+
+    def save_model(self, request, obj, form, change):
+        old_status = None
+        if change and 'status' in form.changed_data:
+            old_booking = Booking.objects.filter(pk=obj.pk).first()
+            if old_booking:
+                old_status = old_booking.status
+        super().save_model(request, obj, form, change)
+        if old_status and old_status != obj.status:
+            from apps.bookings.emails import send_booking_status_update_email
+            send_booking_status_update_email(obj)

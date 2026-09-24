@@ -148,4 +148,74 @@ class BookingTests(TestCase):
         booking.refresh_from_db()
         self.assertEqual(booking.status, 'confirmed')
 
+    def test_booking_request_emails_to_creator_and_visitor(self):
+        from django.core import mail
+        mail.outbox.clear()
+
+        # Pick next Wednesday
+        today = timezone.now().date()
+        days_ahead = (2 - today.weekday() + 7) % 7
+        if days_ahead == 0:
+            days_ahead = 7
+        target_wednesday = today + timedelta(days=days_ahead)
+
+        response = self.client.post(f'/coachdan/book/{self.service.id}/', {
+            'visitor_name': 'Emma Watson',
+            'visitor_email': 'emma@client.com',
+            'visitor_phone': '+1 555 123 4567',
+            'notes': 'Looking forward to the coaching session',
+            'booking_date': target_wednesday.strftime('%Y-%m-%d'),
+            'booking_time': '09:00'
+        })
+        self.assertEqual(response.status_code, 302)
+
+        # 2 emails must be sent: 1 alert to creator, 1 receipt to visitor
+        self.assertEqual(len(mail.outbox), 2)
+
+        recipients = [m.to[0] for m in mail.outbox]
+        self.assertIn('coach@example.com', recipients)
+        self.assertIn('emma@client.com', recipients)
+
+        # Check creator email
+        creator_mail = next(m for m in mail.outbox if m.to[0] == 'coach@example.com')
+        self.assertIn('New Booking Request', creator_mail.subject)
+        self.assertEqual(creator_mail.reply_to, ['emma@client.com'])
+
+        # Check visitor receipt
+        visitor_mail = next(m for m in mail.outbox if m.to[0] == 'emma@client.com')
+        self.assertIn('Booking Request Received', visitor_mail.subject)
+        self.assertEqual(visitor_mail.reply_to, ['coach@example.com'])
+
+    def test_admin_booking_status_action_sends_email(self):
+        from django.core import mail
+        mail.outbox.clear()
+
+        booking = Booking.objects.create(
+            profile=self.profile,
+            service=self.service,
+            visitor_name='Admin Test Visitor',
+            visitor_email='visitor@external.com',
+            start_time=timezone.now() + timedelta(days=3),
+            end_time=timezone.now() + timedelta(days=3, minutes=30),
+            status='pending'
+        )
+
+        admin = User.objects.create_superuser('bossadmin', 'admin@linkstudio.app', 'SecretAdmin123!')
+        self.client.force_login(admin)
+
+        # Trigger confirm_bookings admin action
+        response = self.client.post('/admin/bookings/booking/', {
+            'action': 'confirm_bookings',
+            '_selected_action': [booking.id]
+        })
+        self.assertEqual(response.status_code, 302)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, 'confirmed')
+
+        # Visitor received confirmation email from admin action
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['visitor@external.com'])
+        self.assertIn('Confirmed', mail.outbox[0].subject)
+
+
 

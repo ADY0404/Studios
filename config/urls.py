@@ -16,6 +16,7 @@ def home_view(request):
 
 urlpatterns = [
     # Administration
+    path('admin/', admin.site.urls),
     path('cass/', admin.site.urls),
     
     # Home landing

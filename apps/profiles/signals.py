@@ -5,11 +5,7 @@ from apps.profiles.models import Profile, Appearance
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        # Administrator / staff accounts manage LinkStudio via Django Admin and do not have creator profiles
-        if instance.is_staff or instance.is_superuser:
-            return
-
+    if not hasattr(instance, 'profile'):
         # Determine unique username
         base_username = instance.username.lower().strip()
         username = base_username
@@ -26,4 +22,4 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
             display_name=display_name,
             public_email=instance.email
         )
-        Appearance.objects.create(profile=profile)
+        Appearance.objects.get_or_create(profile=profile)

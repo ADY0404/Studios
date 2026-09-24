@@ -41,3 +41,22 @@ This release improves LinkStudio's production security, data protection, reliabi
 #### 10. Local Typography Backup (Poppins Font)
 - **Offline & Cloud Resilience**: Bundled Poppins font files (Regular, Medium, SemiBold, Bold in modern WOFF2 and TTF formats) directly inside `static/fonts/poppins/` with `@font-face` fallbacks, guaranteeing rapid loading and complete resilience if external CDNs are unavailable.
 
+#### 11. Mandatory Email Confirmation Prior to Login
+- **Activation Gate**: Users must verify their email before accessing their account. Unverified sign-in attempts are blocked with clear instructions and a one-click resend link.
+- **Verification Workflow**: Integrated tokenized verification links with 24-hour expiration (`/auth/confirm-email/<uidb64>/<token>/`), plus a dedicated resend confirmation page.
+
+#### 12. Password Reset Flow Redesign
+- **Consistent UI**: Redesigned all four password reset templates (`password_reset.html`, `password_reset_done.html`, `password_reset_confirm.html`, `password_reset_complete.html`) to use Bootstrap 5 cards, brand badges, and responsive layouts matching the main login experience.
+- **Custom Plain-Text Email**: Created clean email templates (`password_reset_email.txt`, `password_reset_subject.txt`) dispatched via Brevo SMTP.
+
+#### 13. Full Administrator Access Across Site
+- **Unrestricted Admin Privileges**: Lifted the middleware block that previously redirected staff and superusers away from the creator dashboard. Admins can now manage creator pages, appearance, bookings, and links directly, with an integrated "Admin Console" quick link in the dashboard navigation.
+- **Automatic Profile Provisioning**: Staff and superuser accounts automatically have creator profiles and appearance settings provisioned.
+
+#### 14. Performance & Load Time Optimization
+- **Persistent DB Connections**: Configured `CONN_MAX_AGE = 600` and `CONN_HEALTH_CHECKS = True` to eliminate the latency of establishing new SSL connections to remote MariaDB/SkySQL on every request.
+- **Non-Blocking Font Loading**: Made Google Fonts load asynchronously with `media="print" onload="this.media='all'"` while local Poppins renders immediately, preventing render blocking.
+- **Removed Render-Blocking `@import`**: Replaced CSS `@import` rules with direct `<link>` tags.
+- **Static Asset Caching**: Added `WHITENOISE_MAX_AGE = 31536000` for 1-year browser caching of static files.
+- **Query Optimization**: Eliminated redundant database lookups in profile and dashboard overview views.
+
